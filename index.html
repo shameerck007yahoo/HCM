@@ -4,9 +4,19 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>HCM Pro KSA</title>
+
+<!-- ══ GOOGLE IDENTITY SERVICES — must be first ══ -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js" async defer></script>
+
 <!-- SheetJS for Excel export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- CryptoJS for AES-256 encryption -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
 <style>
 :root {
   --bg:       #F0F4FF;
@@ -51,27 +61,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   background: radial-gradient(circle, rgba(61,90,241,0.15) 0%, transparent 70%);
   pointer-events: none;
 }
-.sb-logo {
-  padding: 18px 16px 14px; display: flex; align-items: center; gap: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
-}
-.sb-logo-mark {
-  width: 34px; height: 34px; border-radius: 9px;
-  background: linear-gradient(135deg, var(--ind), #6C63FF);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; flex-shrink: 0; box-shadow: 0 3px 12px rgba(61,90,241,0.38);
-}
+.sb-logo { padding: 18px 16px 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
+.sb-logo-mark { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, var(--ind), #6C63FF); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; box-shadow: 0 3px 12px rgba(61,90,241,0.38); }
 .sb-logo-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #fff; line-height: 1; letter-spacing: -0.02em; }
 .sb-logo-sub { font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.28); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
 .sb-nav { padding: 12px 10px; flex: 1; overflow-y: auto; }
 .sb-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.22); padding: 0 8px; margin: 12px 0 4px; }
 .sb-lbl:first-child { margin-top: 0; }
-.nav-link {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 10px; border-radius: 8px; cursor: pointer;
-  font-size: 12.5px; font-weight: 500; color: rgba(255,255,255,0.45);
-  transition: all 0.15s; margin-bottom: 1px; user-select: none;
-}
+.nav-link { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 12.5px; font-weight: 500; color: rgba(255,255,255,0.45); transition: all 0.15s; margin-bottom: 1px; user-select: none; }
 .nav-link:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.8); }
 .nav-link.active { background: linear-gradient(135deg,rgba(61,90,241,0.32),rgba(108,99,255,0.22)); color: #fff; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); }
 .nav-link-icon { font-size: 13px; width: 17px; text-align: center; flex-shrink: 0; }
@@ -83,6 +80,15 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .user-av { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,var(--ind),#7C3AED); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0; }
 .user-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.82); line-height: 1.2; }
 .user-role { font-size: 9.5px; color: rgba(255,255,255,0.28); }
+
+/* Drive status pill in sidebar */
+.drive-status { margin: 8px 10px 0; padding: 7px 10px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 7px; font-size: 11px; color: rgba(255,255,255,0.4); cursor: pointer; transition: all 0.15s; }
+.drive-status:hover { background: rgba(255,255,255,0.08); }
+.drive-status.connected { border-color: rgba(5,150,105,0.3); color: rgba(255,255,255,0.7); }
+.drive-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--t4); flex-shrink: 0; }
+.drive-dot.on { background: var(--emerald); box-shadow: 0 0 6px rgba(5,150,105,0.5); }
+.drive-sync-ico { margin-left: auto; font-size: 12px; opacity: 0.5; }
+.drive-sync-ico.spinning { animation: spin 1s linear infinite; }
 
 /* ── MAIN ── */
 .main { margin-left: var(--sb); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
@@ -104,6 +110,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .tb-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.15s; position: relative; color: var(--t3); }
 .tb-btn:hover { border-color: var(--ind); color: var(--ind); background: var(--ind-lt); }
 .tb-btn-dot::after { content: ''; position: absolute; top: 5px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--rose); border: 1.5px solid #fff; }
+
+/* ── DRIVE CONNECT BUTTON ── */
+.drive-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; font-family: 'DM Sans',sans-serif; font-size: 12px; font-weight: 600; color: var(--t2); transition: all 0.16s; white-space: nowrap; }
+.drive-btn:hover { border-color: var(--ind); color: var(--ind); background: var(--ind-lt); }
+.drive-btn.connected { border-color: rgba(5,150,105,0.3); color: var(--emerald); background: var(--emerald-lt); }
+.drive-btn.syncing { opacity: 0.7; pointer-events: none; }
 
 /* ── PAGE ── */
 .page { padding: 24px 26px; flex: 1; }
@@ -320,12 +332,10 @@ tbody tr:hover .ra { opacity: 1; }
 .pr-step.done .pr-step-lbl{color:var(--emerald);}
 .pr-step-sub{font-size:9.5px;color:var(--t5);margin-top:1px;}
 .pr-step.active .pr-step-sub{color:var(--t3);}
-
 .pr-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--sh-sm);overflow:hidden;}
 .pr-panel-hd{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:space-between;}
 .pr-panel-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:800;color:var(--t1);}
 .pr-panel-body{padding:18px;}
-
 .period-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
 .pc{border:2px solid var(--border);border-radius:var(--r1);padding:12px 14px;cursor:pointer;transition:all .18s;background:var(--surface);}
 .pc:hover{border-color:var(--ind);background:var(--ind-lt);}
@@ -335,7 +345,6 @@ tbody tr:hover .ra { opacity: 1; }
 .pc-status{font-size:9.5px;font-weight:700;margin-top:6px;padding:2px 6px;border-radius:4px;display:inline-block;}
 .pc-status.open{background:var(--emerald-lt);color:var(--emerald);}
 .pc-status.prev{background:var(--bg);color:var(--t4);border:1px solid var(--border);}
-
 .pr-inc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .pr-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);}
 .pr-toggle-l{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--t1);}
@@ -343,12 +352,9 @@ tbody tr:hover .ra { opacity: 1; }
 .toggle-sw.on{background:var(--ind);}
 .toggle-sw::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
 .toggle-sw.on::after{transform:translateX(16px);}
-
 .pr-emp-table td{font-size:12px;}
 .sal-cell{font-family:'JetBrains Mono',monospace;font-size:11.5px;}
 .pr-total-row td{background:var(--bg);font-weight:700;border-top:2px solid var(--border)!important;}
-
-/* Run animation */
 .run-progress{padding:32px 20px;text-align:center;}
 .run-spinner{width:64px;height:64px;border-radius:50%;border:4px solid var(--ind-lt);border-top-color:var(--ind);animation:spin .9s linear infinite;margin:0 auto 20px;}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -359,15 +365,40 @@ tbody tr:hover .ra { opacity: 1; }
 .rsl-ico.running{background:var(--ind-lt);animation:pulse 1s ease-in-out infinite;}
 .rsl-ico.done{background:var(--emerald-lt);color:var(--emerald);}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-
-/* Results */
 .pr-result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
 .prc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;box-shadow:var(--sh-xs);display:flex;align-items:center;gap:10px;}
 .prc-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
 .prc-val{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;line-height:1;}
 .prc-lbl{font-size:10px;color:var(--t3);font-weight:500;margin-top:2px;}
-</style>
 
+/* ══ GOOGLE DRIVE SETUP PANEL ══ */
+.drive-setup-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--sh-sm);
+}
+.drive-setup-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px; font-weight: 800; color: var(--navy);
+  margin-bottom: 4px;
+}
+.drive-setup-desc { font-size: 12.5px; color: var(--t3); margin-bottom: 20px; }
+.drive-info-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 10px;
+  background: var(--bg); border: 1px solid var(--border);
+  margin-bottom: 10px; font-size: 12.5px;
+}
+.drive-info-ico { font-size: 18px; flex-shrink: 0; }
+.drive-info-text strong { display: block; font-size: 12.5px; font-weight: 700; color: var(--t1); }
+.drive-info-text span { font-size: 11px; color: var(--t3); }
+
+/* ══ KEY SETUP MODAL ══ */
+.key-modal { max-width: 480px; }
+</style>
 </head>
 <body>
 
@@ -392,6 +423,17 @@ tbody tr:hover .ra { opacity: 1; }
     <div class="nav-link"><span class="nav-link-icon">🇸🇦</span>Nitaqat</div>
     <div class="nav-link"><span class="nav-link-icon">🏥</span>GOSI</div>
   </nav>
+
+  <!-- Drive Status in Sidebar -->
+  <div class="drive-status" id="sidebarDriveStatus" onclick="handleDriveClick()">
+    <div class="drive-dot" id="sidebarDot"></div>
+    <div style="flex:1">
+      <div id="sidebarDriveLabel" style="font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.55)">Not Connected</div>
+      <div id="sidebarDriveUser" style="font-size:9.5px;color:rgba(255,255,255,0.25);margin-top:1px">Google Drive</div>
+    </div>
+    <span class="drive-sync-ico" id="sidebarSyncIco">☁️</span>
+  </div>
+
   <div class="sb-bottom">
     <div class="user-pill">
       <div class="user-av">HA</div>
@@ -408,6 +450,11 @@ tbody tr:hover .ra { opacity: 1; }
       <span class="bc-current">Dashboard</span>
     </div>
     <div class="topbar-right">
+      <!-- Drive Button -->
+      <button class="drive-btn" id="topDriveBtn" onclick="handleDriveClick()">
+        <span id="topDriveIco">☁️</span>
+        <span id="topDriveLabel">Connect Drive</span>
+      </button>
       <button class="tb-btn tb-btn-dot">🔔</button>
       <button class="tb-btn">❓</button>
       <button class="btn btn-secondary btn-sm" id="topExportBtn" onclick="handleExport()">⬇ Export</button>
@@ -507,118 +554,65 @@ tbody tr:hover .ra { opacity: 1; }
       </div>
     </div>
 
-    <!-- ATTENDANCE -->
+    <!-- ATTENDANCE / PERFORMANCE / SETUP (abbreviated - same as original) -->
     <div class="view" id="view-attendance">
-      <div class="submod-hero">
-        <div class="sh-icon" style="background:var(--violet-lt);border:1px solid rgba(124,58,237,0.15)">🕐</div>
-        <div style="flex:1"><div class="sh-title">Attendance</div><div class="sh-desc">Real-time tracking, shift management and overtime monitoring</div>
-          <div class="sh-badges"><span class="sh-badge" style="background:var(--violet-lt);border-color:rgba(124,58,237,0.2);color:var(--violet)">96% Today</span><span class="sh-badge" style="background:var(--amber-lt);border-color:rgba(217,119,6,0.2);color:var(--amber)">14 Absent</span></div>
-        </div>
-      </div>
+      <div class="submod-hero"><div class="sh-icon" style="background:var(--violet-lt);border:1px solid rgba(124,58,237,0.15)">🕐</div><div style="flex:1"><div class="sh-title">Attendance</div><div class="sh-desc">Real-time tracking, shift management and overtime monitoring</div><div class="sh-badges"><span class="sh-badge" style="background:var(--violet-lt);border-color:rgba(124,58,237,0.2);color:var(--violet)">96% Today</span><span class="sh-badge" style="background:var(--amber-lt);border-color:rgba(217,119,6,0.2);color:var(--amber)">14 Absent</span></div></div></div>
       <div class="submod-grid">
-        <div class="smc" onclick="showToast('Daily Logs — coming soon','info')"><div class="smc-top"><div class="smc-ico style="background:var(--violet-lt)">📅</div><div><div class="smc-name">Daily Attendance</div><div class="smc-desc">Real-time check-in/out records, late arrivals and absence tracking.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">233</div><div class="smc-kpi-l">Present</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">14</div><div class="smc-kpi-l">Absent</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">7</div><div class="smc-kpi-l">Late</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">96%</div><div class="smc-kpi-l">Rate</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Updated: Live</div><button class="open-btn">Open →</button></div></div>
-        <div class="smc" onclick="showToast('Shift Schedules — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--cyan-lt)">🔄</div><div><div class="smc-name">Shift Schedules</div><div class="smc-desc">Define and assign rotating, fixed and flexible shift patterns.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--cyan)">4</div><div class="smc-kpi-l">Shift Types</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">247</div><div class="smc-kpi-l">Assigned</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">3</div><div class="smc-kpi-l">Locations</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">5</div><div class="smc-kpi-l">Unassigned</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Next schedule: Mar 2026</div><button class="open-btn">Open →</button></div></div>
-        <div class="smc" onclick="showToast('Overtime — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--amber-lt)">⏱</div><div><div class="smc-name">Overtime</div><div class="smc-desc">Track and approve OT hours, calculate pay per Saudi Labor Law Art. 107.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">312h</div><div class="smc-kpi-l">This Month</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--orange)">28</div><div class="smc-kpi-l">Employees</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">12</div><div class="smc-kpi-l">Pending</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">18</div><div class="smc-kpi-l">Approved</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Approval pending: 12</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Daily Logs — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--violet-lt)">📅</div><div><div class="smc-name">Daily Attendance</div><div class="smc-desc">Real-time check-in/out records, late arrivals and absence tracking.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">233</div><div class="smc-kpi-l">Present</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">14</div><div class="smc-kpi-l">Absent</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">7</div><div class="smc-kpi-l">Late</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">96%</div><div class="smc-kpi-l">Rate</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Updated: Live</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Shift Schedules — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--cyan-lt)">🔄</div><div><div class="smc-name">Shift Schedules</div><div class="smc-desc">Define and assign rotating, fixed and flexible shift patterns.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--cyan)">4</div><div class="smc-kpi-l">Shift Types</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">247</div><div class="smc-kpi-l">Assigned</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">3</div><div class="smc-kpi-l">Locations</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">5</div><div class="smc-kpi-l">Unassigned</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Next: Mar 2026</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Overtime — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--amber-lt)">⏱</div><div><div class="smc-name">Overtime</div><div class="smc-desc">Track and approve OT hours, calculate pay per Saudi Labor Law Art. 107.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">312h</div><div class="smc-kpi-l">This Month</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--orange)">28</div><div class="smc-kpi-l">Employees</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">12</div><div class="smc-kpi-l">Pending</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">18</div><div class="smc-kpi-l">Approved</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Pending: 12</div><button class="open-btn">Open →</button></div></div>
       </div>
     </div>
 
-    <!-- PERFORMANCE -->
     <div class="view" id="view-performance">
-      <div class="submod-hero">
-        <div class="sh-icon" style="background:var(--amber-lt);border:1px solid rgba(217,119,6,0.15)">🎯</div>
-        <div style="flex:1"><div class="sh-title">Performance Management</div><div class="sh-desc">Goals, appraisals, KPIs and employee development tracking</div>
-          <div class="sh-badges"><span class="sh-badge" style="background:var(--amber-lt);border-color:rgba(217,119,6,0.2);color:var(--amber)">86% Avg Score</span><span class="sh-badge" style="background:var(--rose-lt);border-color:rgba(225,29,72,0.2);color:var(--rose)">34 Pending Reviews</span></div>
-        </div>
-      </div>
+      <div class="submod-hero"><div class="sh-icon" style="background:var(--amber-lt);border:1px solid rgba(217,119,6,0.15)">🎯</div><div style="flex:1"><div class="sh-title">Performance Management</div><div class="sh-desc">Goals, appraisals, KPIs and employee development tracking</div><div class="sh-badges"><span class="sh-badge" style="background:var(--amber-lt);border-color:rgba(217,119,6,0.2);color:var(--amber)">86% Avg Score</span><span class="sh-badge" style="background:var(--rose-lt);border-color:rgba(225,29,72,0.2);color:var(--rose)">34 Pending Reviews</span></div></div></div>
       <div class="submod-grid">
-        <div class="smc" onclick="showToast('Goals & OKRs — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--amber-lt)">🏆</div><div><div class="smc-name">Goals & OKRs</div><div class="smc-desc">Set and track company, department and individual goals and key results.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">142</div><div class="smc-kpi-l">Active Goals</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">68%</div><div class="smc-kpi-l">On Track</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">18</div><div class="smc-kpi-l">At Risk</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">Q1</div><div class="smc-kpi-l">Current</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Q1 2026 cycle</div><button class="open-btn">Open →</button></div></div>
-        <div class="smc" onclick="showToast('Appraisals — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--orange-lt)">📝</div><div><div class="smc-name">Appraisals & Reviews</div><div class="smc-desc">Annual and mid-year performance reviews, 360° feedback management.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--orange)">86%</div><div class="smc-kpi-l">Avg Score</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">34</div><div class="smc-kpi-l">Pending</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">213</div><div class="smc-kpi-l">Completed</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">Annual</div><div class="smc-kpi-l">Cycle</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Due: 15 Mar 2026</div><button class="open-btn">Open →</button></div></div>
-        <div class="smc" onclick="showToast('KPI Dashboard — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--violet-lt)">📈</div><div><div class="smc-name">KPI Dashboard</div><div class="smc-desc">Real-time KPI metrics, department performance and trend analytics.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">47</div><div class="smc-kpi-l">KPIs Tracked</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">38</div><div class="smc-kpi-l">On Target</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">6</div><div class="smc-kpi-l">Warning</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">3</div><div class="smc-kpi-l">Critical</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">7 departments monitored</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Goals & OKRs — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--amber-lt)">🏆</div><div><div class="smc-name">Goals & OKRs</div><div class="smc-desc">Set and track company, department and individual goals.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">142</div><div class="smc-kpi-l">Active</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">68%</div><div class="smc-kpi-l">On Track</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">18</div><div class="smc-kpi-l">At Risk</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">Q1</div><div class="smc-kpi-l">Current</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Q1 2026 cycle</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Appraisals — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--orange-lt)">📝</div><div><div class="smc-name">Appraisals & Reviews</div><div class="smc-desc">Annual and mid-year reviews, 360° feedback management.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--orange)">86%</div><div class="smc-kpi-l">Avg Score</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">34</div><div class="smc-kpi-l">Pending</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">213</div><div class="smc-kpi-l">Completed</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">Annual</div><div class="smc-kpi-l">Cycle</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Due: 15 Mar 2026</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('KPI Dashboard — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--violet-lt)">📈</div><div><div class="smc-name">KPI Dashboard</div><div class="smc-desc">Real-time KPI metrics, department performance and trends.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">47</div><div class="smc-kpi-l">KPIs</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">38</div><div class="smc-kpi-l">On Target</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">6</div><div class="smc-kpi-l">Warning</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">3</div><div class="smc-kpi-l">Critical</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">7 departments</div><button class="open-btn">Open →</button></div></div>
       </div>
     </div>
 
-    <!-- SETUP -->
     <div class="view" id="view-setup">
-      <div class="submod-hero">
-        <div class="sh-icon" style="background:rgba(71,85,105,0.1);border:1px solid rgba(71,85,105,0.15)">⚙️</div>
-        <div style="flex:1"><div class="sh-title">Setup & Configuration</div><div class="sh-desc">System configuration, user roles, permissions and workflow management</div>
-          <div class="sh-badges"><span class="sh-badge">12 Roles</span><span class="sh-badge">8 Workflows</span><span class="sh-badge">24 Users</span></div>
-        </div>
-      </div>
+      <div class="submod-hero"><div class="sh-icon" style="background:rgba(71,85,105,0.1);border:1px solid rgba(71,85,105,0.15)">⚙️</div><div style="flex:1"><div class="sh-title">Setup & Configuration</div><div class="sh-desc">System configuration, user roles, permissions and workflow management</div><div class="sh-badges"><span class="sh-badge">12 Roles</span><span class="sh-badge">8 Workflows</span><span class="sh-badge">24 Users</span></div></div></div>
       <div class="submod-grid">
-        <div class="smc" onclick="showToast('Roles & Permissions — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:rgba(71,85,105,0.1)">🔐</div><div><div class="smc-name">Roles & Permissions</div><div class="smc-desc">Define user roles, access levels and permission sets across all modules.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:#475569">12</div><div class="smc-kpi-l">Roles</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:#64748B">24</div><div class="smc-kpi-l">Users</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">18</div><div class="smc-kpi-l">Active</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">3</div><div class="smc-kpi-l">Pending</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Last modified: 3 days ago</div><button class="open-btn">Open →</button></div></div>
-        <div class="smc" onclick="showToast('Company Structure — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--ind-lt)">🏗</div><div><div class="smc-name">Company Structure</div><div class="smc-desc">Configure legal entities, branches, locations and business units.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">1</div><div class="smc-kpi-l">Entity</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">3</div><div class="smc-kpi-l">Branches</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">7</div><div class="smc-kpi-l">Depts</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">3</div><div class="smc-kpi-l">Cities</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">KSA entity registered</div><button class="open-btn">Open →</button></div></div>
-        <div class="smc" onclick="showToast('Workflows — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--emerald-lt)">🔔</div><div><div class="smc-name">Workflows & Approvals</div><div class="smc-desc">Configure automated workflows, approval chains and notification rules.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">8</div><div class="smc-kpi-l">Workflows</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">6</div><div class="smc-kpi-l">Active</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">24</div><div class="smc-kpi-l">Rules</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">3</div><div class="smc-kpi-l">Drafts</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Leave & payroll automations</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Roles — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:rgba(71,85,105,0.1)">🔐</div><div><div class="smc-name">Roles & Permissions</div><div class="smc-desc">Define user roles, access levels and permission sets.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:#475569">12</div><div class="smc-kpi-l">Roles</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:#64748B">24</div><div class="smc-kpi-l">Users</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">18</div><div class="smc-kpi-l">Active</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">3</div><div class="smc-kpi-l">Pending</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Last modified: 3 days ago</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Structure — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--ind-lt)">🏗</div><div><div class="smc-name">Company Structure</div><div class="smc-desc">Configure legal entities, branches, locations and units.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">1</div><div class="smc-kpi-l">Entity</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">3</div><div class="smc-kpi-l">Branches</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">7</div><div class="smc-kpi-l">Depts</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">3</div><div class="smc-kpi-l">Cities</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">KSA entity registered</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Workflows — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--emerald-lt)">🔔</div><div><div class="smc-name">Workflows & Approvals</div><div class="smc-desc">Configure automated workflows and approval chains.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">8</div><div class="smc-kpi-l">Workflows</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">6</div><div class="smc-kpi-l">Active</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">24</div><div class="smc-kpi-l">Rules</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">3</div><div class="smc-kpi-l">Drafts</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Leave & payroll automations</div><button class="open-btn">Open →</button></div></div>
       </div>
     </div>
 
-
-    <!-- ═══ PAYROLL RUN ═══ -->
+    <!-- PAYROLL RUN -->
     <div class="view" id="view-payrollrun">
       <div class="data-header">
         <div><div class="data-title">Salary Processing</div><div class="data-desc">Generate and review monthly payroll session</div></div>
-        <div class="data-acts" id="pr-acts">
-          <button class="btn btn-secondary btn-sm" onclick="nav('payroll')">← Back to Payroll</button>
-        </div>
+        <div class="data-acts"><button class="btn btn-secondary btn-sm" onclick="nav('payroll')">← Back to Payroll</button></div>
       </div>
-
-      <!-- STEP INDICATOR -->
       <div class="pr-steps" id="pr-steps-bar">
-        <div class="pr-step active" id="prstep-1">
-          <div class="pr-step-num">1</div>
-          <div><div class="pr-step-lbl">Configure Run</div><div class="pr-step-sub">Period & options</div></div>
-        </div>
-        <div class="pr-step" id="prstep-2">
-          <div class="pr-step-num">2</div>
-          <div><div class="pr-step-lbl">Review Payslips</div><div class="pr-step-sub">Verify all entries</div></div>
-        </div>
-        <div class="pr-step" id="prstep-3">
-          <div class="pr-step-num">3</div>
-          <div><div class="pr-step-lbl">Generate Payroll</div><div class="pr-step-sub">Process & finalize</div></div>
-        </div>
-        <div class="pr-step" id="prstep-4">
-          <div class="pr-step-num">4</div>
-          <div><div class="pr-step-lbl">Results</div><div class="pr-step-sub">Summary & export</div></div>
-        </div>
+        <div class="pr-step active" id="prstep-1"><div class="pr-step-num">1</div><div><div class="pr-step-lbl">Configure Run</div><div class="pr-step-sub">Period & options</div></div></div>
+        <div class="pr-step" id="prstep-2"><div class="pr-step-num">2</div><div><div class="pr-step-lbl">Review Payslips</div><div class="pr-step-sub">Verify all entries</div></div></div>
+        <div class="pr-step" id="prstep-3"><div class="pr-step-num">3</div><div><div class="pr-step-lbl">Generate Payroll</div><div class="pr-step-sub">Process & finalize</div></div></div>
+        <div class="pr-step" id="prstep-4"><div class="pr-step-num">4</div><div><div class="pr-step-lbl">Results</div><div class="pr-step-sub">Summary & export</div></div></div>
       </div>
 
-      <!-- STEP 1: CONFIGURE -->
+      <!-- STEP 1 -->
       <div id="pr-s1">
         <div class="pr-panel" style="margin-bottom:14px">
           <div class="pr-panel-hd"><div class="pr-panel-title">📅 Select Pay Period</div><span class="dim-t">February 2026 is the current open period</span></div>
           <div class="pr-panel-body">
             <div class="period-cards">
-              <div class="pc selected" onclick="selectPeriod(this,'Feb 2026')">
-                <div class="pc-month">February</div><div class="pc-year">2026</div>
-                <div class="pc-status open">● Open</div>
-              </div>
-              <div class="pc" onclick="selectPeriod(this,'Jan 2026')">
-                <div class="pc-month">January</div><div class="pc-year">2026</div>
-                <div class="pc-status prev">Processed</div>
-              </div>
-              <div class="pc" onclick="selectPeriod(this,'Dec 2025')">
-                <div class="pc-month">December</div><div class="pc-year">2025</div>
-                <div class="pc-status prev">Processed</div>
-              </div>
-              <div class="pc" onclick="selectPeriod(this,'Nov 2025')">
-                <div class="pc-month">November</div><div class="pc-year">2025</div>
-                <div class="pc-status prev">Processed</div>
-              </div>
+              <div class="pc selected" onclick="selectPeriod(this,'Feb 2026')"><div class="pc-month">February</div><div class="pc-year">2026</div><div class="pc-status open">● Open</div></div>
+              <div class="pc" onclick="selectPeriod(this,'Jan 2026')"><div class="pc-month">January</div><div class="pc-year">2026</div><div class="pc-status prev">Processed</div></div>
+              <div class="pc" onclick="selectPeriod(this,'Dec 2025')"><div class="pc-month">December</div><div class="pc-year">2025</div><div class="pc-status prev">Processed</div></div>
+              <div class="pc" onclick="selectPeriod(this,'Nov 2025')"><div class="pc-month">November</div><div class="pc-year">2025</div><div class="pc-status prev">Processed</div></div>
             </div>
             <div class="fg fg-3">
-              <div class="ff"><label class="flbl">Payroll Type</label>
-                <select class="fselect"><option selected>Monthly Regular</option><option>Supplemental</option><option>Bonus Run</option><option>Off-Cycle</option></select>
-              </div>
-              <div class="ff"><label class="flbl">Payment Date</label>
-                <input class="finput" type="date" value="2026-02-25"/>
-              </div>
-              <div class="ff"><label class="flbl">Department Filter</label>
-                <select class="fselect"><option>All Departments (247)</option><option>Technology (62)</option><option>Finance (28)</option><option>Operations (51)</option><option>HR (19)</option></select>
-              </div>
+              <div class="ff"><label class="flbl">Payroll Type</label><select class="fselect"><option selected>Monthly Regular</option><option>Supplemental</option><option>Bonus Run</option><option>Off-Cycle</option></select></div>
+              <div class="ff"><label class="flbl">Payment Date</label><input class="finput" type="date" value="2026-02-25"/></div>
+              <div class="ff"><label class="flbl">Department Filter</label><select class="fselect"><option>All Departments (247)</option><option>Technology (62)</option><option>Finance (28)</option><option>Operations (51)</option><option>HR (19)</option></select></div>
             </div>
           </div>
         </div>
-
         <div class="pr-panel" style="margin-bottom:14px">
           <div class="pr-panel-hd"><div class="pr-panel-title">⚙️ Payroll Inclusions</div></div>
           <div class="pr-panel-body">
@@ -627,27 +621,25 @@ tbody tr:hover .ra { opacity: 1; }
               <div class="pr-toggle"><div class="pr-toggle-l">🚗 Transport Allowance</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
               <div class="pr-toggle"><div class="pr-toggle-l">📱 Mobile Allowance</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
               <div class="pr-toggle"><div class="pr-toggle-l">🏥 GOSI Deduction</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
-              <div class="pr-toggle"><div class="pr-toggle-l">📊 Income Tax (where applicable)</div><div class="toggle-sw" onclick="this.classList.toggle('on')"></div></div>
+              <div class="pr-toggle"><div class="pr-toggle-l">📊 Income Tax</div><div class="toggle-sw" onclick="this.classList.toggle('on')"></div></div>
               <div class="pr-toggle"><div class="pr-toggle-l">✈️ End of Service Accrual</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
             </div>
           </div>
         </div>
-
         <div style="display:flex;justify-content:flex-end;gap:10px">
           <button class="btn btn-secondary" onclick="nav('payroll')">Cancel</button>
           <button class="btn btn-primary" onclick="prGoStep(2)">Review Payslips →</button>
         </div>
       </div>
 
-      <!-- STEP 2: REVIEW -->
+      <!-- STEP 2 -->
       <div id="pr-s2" style="display:none">
         <div class="kpi-row" style="margin-bottom:14px">
-          <div class="kpi-c"><div class="kpi-ico" style="background:var(--ind-lt)">👥</div><div><div class="kpi-val" style="color:var(--ind)" id="pr-emp-count">247</div><div class="kpi-lbl">Employees</div></div></div>
-          <div class="kpi-c"><div class="kpi-ico" style="background:var(--cyan-lt)">💰</div><div><div class="kpi-val" style="color:var(--cyan)" id="pr-gross-total">2,100,000</div><div class="kpi-lbl">Gross SAR</div></div></div>
-          <div class="kpi-c"><div class="kpi-ico" style="background:var(--rose-lt)">📉</div><div><div class="kpi-val" style="color:var(--rose)" id="pr-ded-total">189,000</div><div class="kpi-lbl">Deductions SAR</div></div></div>
-          <div class="kpi-c"><div class="kpi-ico" style="background:var(--emerald-lt)">💳</div><div><div class="kpi-val" style="color:var(--emerald)" id="pr-net-total">1,911,000</div><div class="kpi-lbl">Net Payable SAR</div></div></div>
+          <div class="kpi-c"><div class="kpi-ico" style="background:var(--ind-lt)">👥</div><div><div class="kpi-val" style="color:var(--ind)">247</div><div class="kpi-lbl">Employees</div></div></div>
+          <div class="kpi-c"><div class="kpi-ico" style="background:var(--cyan-lt)">💰</div><div><div class="kpi-val" style="color:var(--cyan)">2,100,000</div><div class="kpi-lbl">Gross SAR</div></div></div>
+          <div class="kpi-c"><div class="kpi-ico" style="background:var(--rose-lt)">📉</div><div><div class="kpi-val" style="color:var(--rose)">189,000</div><div class="kpi-lbl">Deductions SAR</div></div></div>
+          <div class="kpi-c"><div class="kpi-ico" style="background:var(--emerald-lt)">💳</div><div><div class="kpi-val" style="color:var(--emerald)">1,911,000</div><div class="kpi-lbl">Net Payable SAR</div></div></div>
         </div>
-
         <div class="pr-panel" style="margin-bottom:14px">
           <div class="pr-panel-hd">
             <div class="pr-panel-title">👤 Payroll Preview — Feb 2026</div>
@@ -658,27 +650,12 @@ tbody tr:hover .ra { opacity: 1; }
           </div>
           <div class="tbl-wrap">
             <table>
-              <thead>
-                <tr>
-                  <th>Emp ID</th><th>Employee</th><th>Department</th>
-                  <th style="text-align:right">Basic SAR</th>
-                  <th style="text-align:right">Housing</th>
-                  <th style="text-align:right">Transport</th>
-                  <th style="text-align:right">Other Allow.</th>
-                  <th style="text-align:right">Gross</th>
-                  <th style="text-align:right">GOSI Ded.</th>
-                  <th style="text-align:right">Net Pay</th>
-                  <th>WPS</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Emp ID</th><th>Employee</th><th>Department</th><th style="text-align:right">Basic SAR</th><th style="text-align:right">Housing</th><th style="text-align:right">Transport</th><th style="text-align:right">Other</th><th style="text-align:right">Gross</th><th style="text-align:right">GOSI</th><th style="text-align:right">Net Pay</th><th>WPS</th></tr></thead>
               <tbody id="pr-emp-body"></tbody>
               <tfoot>
                 <tr class="pr-total-row">
                   <td colspan="3" style="font-weight:800;font-family:'Bricolage Grotesque',sans-serif">TOTAL (247 employees)</td>
-                  <td class="sal-cell" style="text-align:right">1,235,000</td>
-                  <td class="sal-cell" style="text-align:right">370,500</td>
-                  <td class="sal-cell" style="text-align:right">123,500</td>
-                  <td class="sal-cell" style="text-align:right">371,000</td>
+                  <td class="sal-cell" style="text-align:right">1,235,000</td><td class="sal-cell" style="text-align:right">370,500</td><td class="sal-cell" style="text-align:right">123,500</td><td class="sal-cell" style="text-align:right">371,000</td>
                   <td class="sal-cell" style="text-align:right;color:var(--cyan);font-weight:800">2,100,000</td>
                   <td class="sal-cell" style="text-align:right;color:var(--rose)">189,000</td>
                   <td class="sal-cell" style="text-align:right;color:var(--emerald);font-weight:800">1,911,000</td>
@@ -689,7 +666,6 @@ tbody tr:hover .ra { opacity: 1; }
           </div>
           <div class="pagination"><div>Showing sample · <strong>247</strong> total records</div></div>
         </div>
-
         <div style="display:flex;justify-content:space-between;align-items:center">
           <button class="btn btn-secondary" onclick="prGoStep(1)">← Back</button>
           <div style="display:flex;gap:8px">
@@ -699,7 +675,7 @@ tbody tr:hover .ra { opacity: 1; }
         </div>
       </div>
 
-      <!-- STEP 3: RUNNING -->
+      <!-- STEP 3 -->
       <div id="pr-s3" style="display:none">
         <div class="pr-panel">
           <div class="pr-panel-hd"><div class="pr-panel-title">⚙️ Processing Payroll — February 2026</div></div>
@@ -707,7 +683,7 @@ tbody tr:hover .ra { opacity: 1; }
             <div class="run-spinner" id="run-spinner"></div>
             <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--navy)" id="run-headline">Initialising payroll engine…</div>
             <div style="font-size:12px;color:var(--t3);margin-top:4px" id="run-sub">Please wait, this may take a few seconds</div>
-            <div class="run-step-list" id="run-step-list">
+            <div class="run-step-list">
               <div class="rsl-item" id="rsl-1"><div class="rsl-ico running">⚙</div><span>Validating employee records</span></div>
               <div class="rsl-item" id="rsl-2"><div class="rsl-ico pending">○</div><span>Calculating basic salaries & allowances</span></div>
               <div class="rsl-item" id="rsl-3"><div class="rsl-ico pending">○</div><span>Computing GOSI contributions</span></div>
@@ -720,7 +696,7 @@ tbody tr:hover .ra { opacity: 1; }
         </div>
       </div>
 
-      <!-- STEP 4: RESULTS -->
+      <!-- STEP 4 -->
       <div id="pr-s4" style="display:none">
         <div class="pr-result-grid">
           <div class="prc"><div class="prc-ico" style="background:var(--emerald-lt)">✅</div><div><div class="prc-val" style="color:var(--emerald)">247</div><div class="prc-lbl">Payslips Generated</div></div></div>
@@ -728,13 +704,9 @@ tbody tr:hover .ra { opacity: 1; }
           <div class="prc"><div class="prc-ico" style="background:var(--teal-lt)">🏦</div><div><div class="prc-val" style="color:var(--teal)">1,911,000</div><div class="prc-lbl">Net Payable SAR</div></div></div>
           <div class="prc"><div class="prc-ico" style="background:var(--violet-lt)">🏥</div><div><div class="prc-val" style="color:var(--violet)">189,000</div><div class="prc-lbl">GOSI Deducted SAR</div></div></div>
         </div>
-
         <div class="pr-panel" style="margin-bottom:14px">
           <div class="pr-panel-hd">
-            <div>
-              <div class="pr-panel-title">✅ Payroll Session Complete — February 2026</div>
-              <div style="font-size:11px;color:var(--t3);margin-top:2px">Session ID: PAY-2026-02-001 · Generated: 23 Feb 2026, 09:47 AM · Processed by: HR Admin</div>
-            </div>
+            <div><div class="pr-panel-title">✅ Payroll Session Complete — February 2026</div><div style="font-size:11px;color:var(--t3);margin-top:2px">Session ID: PAY-2026-02-001 · Generated: 23 Feb 2026 · Processed by: HR Admin</div></div>
             <span class="pill p-active" style="font-size:11px;padding:4px 10px"><span class="pdot"></span>Finalised</span>
           </div>
           <div class="pr-panel-body">
@@ -772,19 +744,17 @@ tbody tr:hover .ra { opacity: 1; }
             </div>
           </div>
         </div>
-
         <div style="display:flex;justify-content:space-between;align-items:center">
           <button class="btn btn-secondary" onclick="nav('payroll')">← Back to Payroll</button>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-secondary" onclick="exportPayrollResult()">⬇ Export Payroll Excel</button>
-            <button class="btn btn-primary" onclick="showToast('✅ Payroll approved & locked')">🔒 Approve & Lock Session</button>
+            <button class="btn btn-secondary" onclick="exportPayrollResult()">⬇ Export Excel</button>
+            <button class="btn btn-primary" onclick="showToast('✅ Payroll approved & locked')">🔒 Approve & Lock</button>
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- EMPLOYEES TABLE -->
+    <!-- EMPLOYEES -->
     <div class="view" id="view-employees">
       <div class="data-header">
         <div><div class="data-title">Employee Data</div><div class="data-desc">All staff records, compliance and employment details</div></div>
@@ -797,10 +767,10 @@ tbody tr:hover .ra { opacity: 1; }
         <div class="kpi-c"><div class="kpi-ico" style="background:var(--rose-lt)">📋</div><div><div class="kpi-val" style="color:var(--rose)">14</div><div class="kpi-lbl">On Probation</div></div></div>
       </div>
       <div class="toolbar">
-        <div class="sw"><span class="sw-ico">🔍</span><input type="text" placeholder="Search name, ID, department…"></div>
-        <select class="fsel"><option>All Departments</option><option>Technology</option><option>Finance</option><option>Operations</option><option>HR</option><option>Marketing</option></select>
-        <select class="fsel"><option>All Nationalities</option><option>Saudi</option><option>Expatriate</option></select>
-        <select class="fsel"><option>All Statuses</option><option>Active</option><option>Probation</option><option>Inactive</option></select>
+        <div class="sw"><span class="sw-ico">🔍</span><input type="text" placeholder="Search name, ID, department…" oninput="filterEmpTable(this.value)"></div>
+        <select class="fsel" onchange="filterEmpTable()"><option>All Departments</option><option>Technology</option><option>Finance</option><option>Operations</option><option>HR</option><option>Marketing</option></select>
+        <select class="fsel" onchange="filterEmpTable()"><option>All Nationalities</option><option>Saudi</option><option>Expatriate</option></select>
+        <select class="fsel" onchange="filterEmpTable()"><option>All Statuses</option><option>Active</option><option>Probation</option><option>Inactive</option></select>
       </div>
       <div class="tbl-card">
         <div class="tbl-hd"><div class="tbl-title">All Employees</div><div class="tbl-ct" id="empCt">6 of 247</div></div>
@@ -813,7 +783,7 @@ tbody tr:hover .ra { opacity: 1; }
     <div class="view" id="view-departments">
       <div class="data-header">
         <div><div class="data-title">Departments</div><div class="data-desc">Organizational structure and department management</div></div>
-        <div class="data-acts"><div class="sw"><span class="sw-ico">🔍</span><input type="text" placeholder="Search…" style="width:180px"></div><button class="btn btn-secondary btn-sm" onclick="exportDepartments()">⬇ Export Excel</button><button class="btn btn-primary btn-sm" onclick="showToast('✅ Department form opened')">＋ Add Department</button></div>
+        <div class="data-acts"><div class="sw"><span class="sw-ico">🔍</span><input type="text" placeholder="Search…" style="width:180px"></div><button class="btn btn-secondary btn-sm" onclick="exportDepartments()">⬇ Export Excel</button><button class="btn btn-primary btn-sm" onclick="showToast('Department form opened')">＋ Add Department</button></div>
       </div>
       <div class="kpi-row">
         <div class="kpi-c"><div class="kpi-ico" style="background:var(--teal-lt)">🏢</div><div><div class="kpi-val" style="color:var(--teal)">7</div><div class="kpi-lbl">Departments</div></div></div>
@@ -828,7 +798,7 @@ tbody tr:hover .ra { opacity: 1; }
     <div class="view" id="view-subdepartments">
       <div class="data-header">
         <div><div class="data-title">Sub-Departments</div><div class="data-desc">Teams and divisions within departments</div></div>
-        <div class="data-acts"><div class="sw"><span class="sw-ico">🔍</span><input type="text" placeholder="Search…" style="width:180px"></div><select class="fsel"><option>All Departments</option><option>Technology</option><option>Finance</option><option>Operations</option><option>HR</option></select><button class="btn btn-secondary btn-sm" onclick="exportDepartments()">⬇ Export Excel</button><button class="btn btn-primary btn-sm" onclick="showToast('✅ Team form opened')">＋ Add Team</button></div>
+        <div class="data-acts"><div class="sw"><span class="sw-ico">🔍</span><input type="text" placeholder="Search…" style="width:180px"></div><select class="fsel"><option>All Departments</option><option>Technology</option><option>Finance</option><option>Operations</option></select><button class="btn btn-secondary btn-sm" onclick="exportDepartments()">⬇ Export Excel</button><button class="btn btn-primary btn-sm" onclick="showToast('Team form opened')">＋ Add Team</button></div>
       </div>
       <div class="kpi-row">
         <div class="kpi-c"><div class="kpi-ico" style="background:var(--violet-lt)">📂</div><div><div class="kpi-val" style="color:var(--violet)">18</div><div class="kpi-lbl">Total Teams</div></div></div>
@@ -843,10 +813,10 @@ tbody tr:hover .ra { opacity: 1; }
       </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- end .page -->
+</div><!-- end .main -->
 
-<!-- MODAL -->
+<!-- ═══ EMPLOYEE MODAL ═══ -->
 <div class="modal-bd" id="modalBd" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="m-hd">
@@ -892,7 +862,7 @@ tbody tr:hover .ra { opacity: 1; }
         <div class="fg fg-3"><div class="ff"><label class="flbl">Basic Salary SAR <span class="req">*</span></label><input class="finput mono" id="f_basic" type="number" placeholder="10,000" oninput="calcSal()"/></div><div class="ff"><label class="flbl">Housing Allowance</label><input class="finput mono" id="f_housing" type="number" placeholder="3,000" oninput="calcSal()"/><div class="fhint">~25% of basic</div></div><div class="ff"><label class="flbl">Transport Allowance</label><input class="finput mono" id="f_transport" type="number" placeholder="1,000" oninput="calcSal()"/></div></div>
         <div class="fg fg-3" style="margin-top:8px"><div class="ff"><label class="flbl">Mobile Allowance</label><input class="finput mono" id="f_moballow" type="number" placeholder="500" oninput="calcSal()"/></div><div class="ff"><label class="flbl">Other Allowances</label><input class="finput mono" id="f_other" type="number" placeholder="0" oninput="calcSal()"/></div><div class="ff"><label class="flbl">Total Package/mo</label><input class="finput mono" id="f_total" readonly placeholder="Auto" style="opacity:0.6;background:var(--bg2)"/></div></div>
         <div class="slbl" style="margin-top:16px">📆 Leave (Saudi Labor Law)</div>
-        <div class="fg fg-4"><div class="ff"><label class="flbl">Annual Leave</label><input class="finput" type="number" value="21"/><div class="fhint">30 after 5yrs</div></div><div class="ff"><label class="flbl">Sick Leave</label><input class="finput" type="number" value="120"/></div><div class="ff"><label class="flbl">Maternity Leave</label><input class="finput" type="number" value="70"/></div><div class="ff"><label class="flbl">Hajj Leave</label><input class="finput" type="number" value="10"/></div></div>
+        <div class="fg fg-4"><div class="ff"><label class="flbl">Annual Leave</label><input class="finput" type="number" value="21"/></div><div class="ff"><label class="flbl">Sick Leave</label><input class="finput" type="number" value="120"/></div><div class="ff"><label class="flbl">Maternity Leave</label><input class="finput" type="number" value="70"/></div><div class="ff"><label class="flbl">Hajj Leave</label><input class="finput" type="number" value="10"/></div></div>
       </div>
       <div class="tp" id="tp-emrg">
         <div class="slbl">🚨 Emergency Contact</div>
@@ -909,10 +879,91 @@ tbody tr:hover .ra { opacity: 1; }
   </div>
 </div>
 
+<!-- ═══ GOOGLE DRIVE SETUP MODAL ═══ -->
+<div class="modal-bd" id="driveModalBd" onclick="if(event.target===this)closeDriveModal()">
+  <div class="modal" style="max-width:520px">
+    <div class="m-hd">
+      <div class="m-hd-l">
+        <div class="m-hd-ico" style="background:var(--emerald-lt);border-color:rgba(5,150,105,0.2);font-size:18px">☁️</div>
+        <div><div class="m-hd-title" id="driveModalTitle">Connect Google Drive</div><div class="m-hd-sub" id="driveModalSub">Secure cloud backup with AES-256 encryption</div></div>
+      </div>
+      <button class="m-close" onclick="closeDriveModal()">×</button>
+    </div>
+
+    <!-- Panel A: Not connected -->
+    <div id="drivePanel-connect">
+      <div style="padding:20px">
+        <div class="drive-info-row"><div class="drive-info-ico">🔐</div><div class="drive-info-text"><strong>AES-256 Encrypted</strong><span>All data is encrypted before leaving your browser — Google cannot read it</span></div></div>
+        <div class="drive-info-row"><div class="drive-info-ico">📁</div><div class="drive-info-text"><strong>Private App Folder</strong><span>Files are stored in a hidden folder visible only to this app, not in your Drive UI</span></div></div>
+        <div class="drive-info-row"><div class="drive-info-ico">🔄</div><div class="drive-info-text"><strong>Auto-Sync</strong><span>Every add/edit/delete is automatically saved to Drive in real-time</span></div></div>
+        <div class="drive-info-row" style="margin-bottom:0"><div class="drive-info-ico">☁️</div><div class="drive-info-text"><strong>Access Anywhere</strong><span>Your data is available on any device after Google sign-in</span></div></div>
+
+        <div style="margin-top:20px;padding:14px;background:var(--amber-lt);border:1px solid rgba(217,119,6,0.2);border-radius:10px;font-size:12px;color:#92400E">
+          <strong>⚙️ Before connecting:</strong> You must add your Google OAuth Client ID below. Get one from <a href="https://console.cloud.google.com" target="_blank" style="color:var(--ind)">Google Cloud Console</a> → APIs & Services → Credentials.
+        </div>
+
+        <div style="margin-top:14px">
+          <div class="ff">
+            <label class="flbl">Google OAuth Client ID <span class="req">*</span></label>
+            <input class="finput mono" id="clientIdInput" placeholder="123456789-xxxxx.apps.googleusercontent.com" style="font-size:11px"/>
+            <div class="fhint">Paste your Client ID from Google Cloud Console. This is stored only in your browser.</div>
+          </div>
+          <div class="ff" style="margin-top:10px">
+            <label class="flbl">Encryption Password <span class="req">*</span></label>
+            <input class="finput" id="encKeyInput" type="password" placeholder="Strong password for encrypting data"/>
+            <div class="fhint">This password encrypts your data. Store it safely — if lost, data cannot be recovered.</div>
+          </div>
+        </div>
+      </div>
+      <div class="m-ft">
+        <span class="m-ft-hint">Data never sent unencrypted</span>
+        <button class="btn btn-secondary" onclick="closeDriveModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="initAndConnect()">🔗 Connect Google Drive</button>
+      </div>
+    </div>
+
+    <!-- Panel B: Connected -->
+    <div id="drivePanel-connected" style="display:none">
+      <div style="padding:20px">
+        <div style="text-align:center;padding:16px 0 20px">
+          <div style="font-size:40px;margin-bottom:8px">✅</div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;color:var(--navy)" id="connectedEmail">Connected</div>
+          <div style="font-size:12px;color:var(--t3);margin-top:4px">Google Drive is active — all data syncs automatically</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+          <div style="background:var(--emerald-lt);border:1px solid rgba(5,150,105,0.2);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--emerald)" id="driveSyncCount">0</div>
+            <div style="font-size:10px;color:var(--t3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Files Synced</div>
+          </div>
+          <div style="background:var(--ind-lt);border:1px solid rgba(61,90,241,0.2);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:800;color:var(--ind)" id="driveLastSync">—</div>
+            <div style="font-size:10px;color:var(--t3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Last Sync</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px" id="driveFileList"></div>
+      </div>
+      <div class="m-ft">
+        <button class="btn btn-danger btn-sm" onclick="disconnectDrive()">🔌 Disconnect</button>
+        <button class="btn btn-secondary" onclick="closeDriveModal()">Close</button>
+        <button class="btn btn-primary" onclick="saveAllToDrive()">☁️ Sync Now</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
 <div class="toast" id="toast"><span id="tIcon">✅</span><span id="tMsg">Saved</span></div>
 
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
 <script>
-const employees=[
+
+// ═══════════════════════════════════════
+// DATA STORE
+// ═══════════════════════════════════════
+let employees=[
   {id:'EMP001',first:'Ahmed',last:'Al-Rashid',pos:'Senior Engineer',dept:'Technology',nat:'Saudi',natid:'1098765432',iqama:'',iqamaExp:'',gosi:true,status:'active',color:'#3D5AF1'},
   {id:'EMP002',first:'Sara',last:'Al-Harbi',pos:'Financial Analyst',dept:'Finance',nat:'Saudi',natid:'1023456789',iqama:'',iqamaExp:'',gosi:true,status:'active',color:'#7C3AED'},
   {id:'EMP003',first:'Omar',last:'Bin Khalid',pos:'CTO',dept:'Technology',nat:'Saudi',natid:'1055544433',iqama:'',iqamaExp:'',gosi:true,status:'active',color:'#0D9488'},
@@ -920,7 +971,7 @@ const employees=[
   {id:'EMP005',first:'Hassan',last:'Al-Ghamdi',pos:'HR Specialist',dept:'HR',nat:'Saudi',natid:'1077788899',iqama:'',iqamaExp:'',gosi:false,status:'probation',color:'#E11D48'},
   {id:'EMP006',first:'Tariq',last:'Al-Otaibi',pos:'Marketing Executive',dept:'Marketing',nat:'Saudi',natid:'1033344455',iqama:'',iqamaExp:'',gosi:true,status:'inactive',color:'#B45309'},
 ];
-const departments=[
+let departments=[
   {id:'TECH',name:'Technology',ar:'تقنية المعلومات',head:'Omar Bin Khalid',hc:'#0D9488',count:62,budget:80,subs:['Software Dev','Infrastructure','Data & Analytics','Security'],color:'#3D5AF1',icon:'💻'},
   {id:'FIN',name:'Finance',ar:'المالية',head:'Maha Al-Saud',hc:'#7C3AED',count:28,budget:35,subs:['Accounting','Treasury','Audit','FP&A'],color:'#7C3AED',icon:'💰'},
   {id:'OPS',name:'Operations',ar:'العمليات',head:'Khalid Al-Mutairi',hc:'#D97706',count:51,budget:60,subs:['Procurement','Logistics','Facilities','QA'],color:'#0D9488',icon:'⚙️'},
@@ -929,7 +980,7 @@ const departments=[
   {id:'LEG',name:'Legal',ar:'الشؤون القانونية',head:'Salwa Al-Rashid',hc:'#3D5AF1',count:11,budget:15,subs:['Contracts','Compliance'],color:'#B45309',icon:'⚖️'},
   {id:'EXC',name:'Executive',ar:'الإدارة التنفيذية',head:'CEO Office',hc:'#0D9488',count:8,budget:10,subs:['CEO Office','Strategy'],color:'#0891B2',icon:'🏛️'},
 ];
-const subDepts=[
+let subDepts=[
   {code:'TECH-SW',name:'Software Development',parent:'Technology',lead:'Abdullah Al-Zahrani',count:24,cc:'CC-1001',color:'#3D5AF1'},
   {code:'TECH-INF',name:'Infrastructure',parent:'Technology',lead:'Yasser Al-Dawsari',count:15,cc:'CC-1002',color:'#3D5AF1'},
   {code:'TECH-DA',name:'Data & Analytics',parent:'Technology',lead:'Reem Al-Farsi',count:12,cc:'CC-1003',color:'#3D5AF1'},
@@ -950,11 +1001,258 @@ const subDepts=[
   {code:'LEG-CON',name:'Legal Affairs',parent:'Legal',lead:'Manal Al-Rashid',count:11,cc:'CC-6001',color:'#B45309'},
 ];
 
-const ini=(f,l)=>(f[0]||'').toUpperCase()+(l[0]||'').toUpperCase();
-const fdt=d=>d?new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'—';
-const du=d=>d?Math.ceil((new Date(d)-new Date())/86400000):null;
+// ═══════════════════════════════════════
+// GOOGLE DRIVE + ENCRYPTION
+// ═══════════════════════════════════════
+let accessToken = null;
+let tokenClient = null;
+let encryptionKey = null;
+let driveConnected = false;
+let syncCount = 0;
 
-const bcmap={
+const FILES = {
+  employees:   'hcm_employees.enc',
+  departments: 'hcm_departments.enc',
+  subDepts:    'hcm_subdepts.enc',
+};
+
+// ── Encryption ──
+function encryptData(data) {
+  return CryptoJS.AES.encrypt(JSON.stringify(data), encryptionKey).toString();
+}
+function decryptData(cipher) {
+  const bytes = CryptoJS.AES.decrypt(cipher, encryptionKey);
+  return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+}
+
+// ── Init Google Auth with user-supplied client ID ──
+function initGoogleAuth(clientId) {
+  return new Promise((resolve, reject) => {
+    if (typeof google === 'undefined' || !google.accounts) {
+      reject('Google Identity Services not loaded. Check your internet connection.'); return;
+    }
+    try {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'https://www.googleapis.com/auth/drive.appdata',
+        callback: async (resp) => {
+          if (resp.error) { reject(resp.error); return; }
+          accessToken = resp.access_token;
+          driveConnected = true;
+          updateDriveUI(true);
+          await loadAllFromDrive();
+          resolve();
+        },
+      });
+      resolve('ready');
+    } catch(e) { reject(e); }
+  });
+}
+
+// ── Find file in appDataFolder ──
+async function findFileId(filename) {
+  const r = await fetch(
+    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='${filename}'&fields=files(id,name,modifiedTime)`,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+  const d = await r.json();
+  return d.files?.[0] || null;
+}
+
+// ── Upload (create or update) ──
+async function saveToDrive(filename, data) {
+  if (!accessToken || !encryptionKey) return;
+  const encrypted = encryptData(data);
+  const existing = await findFileId(filename);
+  const meta = { name: filename };
+  if (!existing) meta.parents = ['appDataFolder'];
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+  form.append('file', new Blob([encrypted], { type: 'text/plain' }));
+  const url = existing
+    ? `https://www.googleapis.com/upload/drive/v3/files/${existing.id}?uploadType=multipart`
+    : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
+  await fetch(url, {
+    method: existing ? 'PATCH' : 'POST',
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+  });
+  syncCount++;
+  updateDriveLastSync();
+}
+
+// ── Download & decrypt ──
+async function loadFromDrive(filename) {
+  if (!accessToken || !encryptionKey) return null;
+  const file = await findFileId(filename);
+  if (!file) return null;
+  const r = await fetch(
+    `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+  try {
+    const cipher = await r.text();
+    return decryptData(cipher);
+  } catch { return null; }
+}
+
+// ── Save all ──
+async function saveAllToDrive() {
+  if (!driveConnected) return;
+  setSyncSpinner(true);
+  try {
+    await saveToDrive(FILES.employees, employees);
+    await saveToDrive(FILES.departments, departments);
+    await saveToDrive(FILES.subDepts, subDepts);
+    showToast('☁️ Synced to Google Drive');
+    updateDriveFileList();
+  } catch(e) {
+    showToast('Drive sync failed: ' + e, 'err');
+  }
+  setSyncSpinner(false);
+}
+
+// ── Load all ──
+async function loadAllFromDrive() {
+  setSyncSpinner(true);
+  showToast('☁️ Loading from Drive…', 'info');
+  try {
+    const emp  = await loadFromDrive(FILES.employees);
+    const dept = await loadFromDrive(FILES.departments);
+    const sub  = await loadFromDrive(FILES.subDepts);
+    if (emp)  { employees.length=0; employees.push(...emp); renderEmp(); }
+    if (dept) { departments.length=0; departments.push(...dept); renderDepts(); }
+    if (sub)  { subDepts.length=0; subDepts.push(...sub); renderSubDepts(); }
+    showToast('✅ Data loaded from Google Drive');
+    updateDriveFileList();
+  } catch(e) {
+    showToast('Drive load failed: ' + e, 'err');
+  }
+  setSyncSpinner(false);
+}
+
+// ── Auto-save after every data change ──
+async function autoSave() {
+  if (driveConnected) await saveAllToDrive();
+}
+
+// ── Drive UI ──
+function updateDriveUI(connected) {
+  const dot = document.getElementById('sidebarDot');
+  const lbl = document.getElementById('sidebarDriveLabel');
+  const usr = document.getElementById('sidebarDriveUser');
+  const btn = document.getElementById('topDriveBtn');
+  const ico = document.getElementById('topDriveIco');
+  const topLbl = document.getElementById('topDriveLabel');
+  const status = document.getElementById('sidebarDriveStatus');
+
+  if (connected) {
+    dot.className = 'drive-dot on';
+    lbl.textContent = 'Drive Connected';
+    lbl.style.color = 'rgba(255,255,255,0.8)';
+    usr.textContent = 'AES-256 encrypted';
+    btn.className = 'drive-btn connected';
+    ico.textContent = '✅';
+    topLbl.textContent = 'Drive Synced';
+    status.className = 'drive-status connected';
+  } else {
+    dot.className = 'drive-dot';
+    lbl.textContent = 'Not Connected';
+    lbl.style.color = 'rgba(255,255,255,0.55)';
+    usr.textContent = 'Google Drive';
+    btn.className = 'drive-btn';
+    ico.textContent = '☁️';
+    topLbl.textContent = 'Connect Drive';
+  }
+}
+
+function setSyncSpinner(on) {
+  const ico = document.getElementById('sidebarSyncIco');
+  ico.className = on ? 'drive-sync-ico spinning' : 'drive-sync-ico';
+  const topBtn = document.getElementById('topDriveBtn');
+  if (on) topBtn.classList.add('syncing'); else topBtn.classList.remove('syncing');
+}
+
+function updateDriveLastSync() {
+  const el = document.getElementById('driveLastSync');
+  if (el) el.textContent = new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+  const sc = document.getElementById('driveSyncCount');
+  if (sc) sc.textContent = syncCount;
+}
+
+async function updateDriveFileList() {
+  const el = document.getElementById('driveFileList');
+  if (!el || !accessToken) return;
+  const fileNames = Object.values(FILES);
+  const items = await Promise.all(fileNames.map(async fn => {
+    const f = await findFileId(fn);
+    return { name: fn, exists: !!f, modified: f?.modifiedTime };
+  }));
+  el.innerHTML = items.map(f => `
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);font-size:12px">
+      <span style="font-size:14px">${f.exists ? '✅' : '⭕'}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--t2);flex:1">${f.name}</span>
+      <span style="color:var(--t4);font-size:10.5px">${f.exists ? (f.modified ? new Date(f.modified).toLocaleDateString('en-GB') : 'Saved') : 'Not yet synced'}</span>
+    </div>
+  `).join('');
+}
+
+// ── Modal open/close ──
+function handleDriveClick() {
+  document.getElementById('driveModalBd').classList.add('open');
+  if (driveConnected) {
+    document.getElementById('drivePanel-connect').style.display = 'none';
+    document.getElementById('drivePanel-connected').style.display = 'block';
+    document.getElementById('driveModalTitle').textContent = 'Google Drive Status';
+    document.getElementById('driveModalSub').textContent = 'Your data is encrypted and synced';
+    document.getElementById('driveSyncCount').textContent = syncCount;
+    updateDriveLastSync();
+    updateDriveFileList();
+  } else {
+    document.getElementById('drivePanel-connect').style.display = 'block';
+    document.getElementById('drivePanel-connected').style.display = 'none';
+  }
+}
+
+function closeDriveModal() {
+  document.getElementById('driveModalBd').classList.remove('open');
+}
+
+async function initAndConnect() {
+  const clientId = document.getElementById('clientIdInput').value.trim();
+  const key = document.getElementById('encKeyInput').value.trim();
+  if (!clientId || !key) { showToast('Please enter Client ID and password', 'warn'); return; }
+  if (key.length < 8) { showToast('Password must be at least 8 characters', 'warn'); return; }
+  encryptionKey = key;
+  try {
+    const status = await initGoogleAuth(clientId);
+    if (status === 'ready') {
+      tokenClient.requestAccessToken({ prompt: 'consent' });
+    }
+  } catch(e) {
+    showToast('Error: ' + e, 'err');
+  }
+}
+
+function disconnectDrive() {
+  if (!confirm('Disconnect Google Drive? Local data will remain, cloud sync will stop.')) return;
+  if (accessToken) {
+    google.accounts.oauth2.revoke(accessToken, () => {});
+  }
+  accessToken = null; driveConnected = false; encryptionKey = null; syncCount = 0;
+  updateDriveUI(false);
+  closeDriveModal();
+  showToast('🔌 Disconnected from Google Drive', 'warn');
+  document.getElementById('drivePanel-connect').style.display = 'block';
+  document.getElementById('drivePanel-connected').style.display = 'none';
+}
+
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+let currentView = 'home';
+const bcmap = {
   home:[{l:'Dashboard'}],
   coredata:[{l:'Dashboard',v:'home'},{l:'Core Data'}],
   payroll:[{l:'Dashboard',v:'home'},{l:'Payroll'}],
@@ -967,39 +1265,62 @@ const bcmap={
   payrollrun:[{l:'Dashboard',v:'home'},{l:'Payroll',v:'payroll'},{l:'Salary Processing'}],
 };
 
-function nav(id){
+function nav(id) {
   currentView = id;
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  const el=document.getElementById('view-'+id);
-  if(el) el.classList.add('active');
-  const bc=document.getElementById('breadcrumb');
-  const cr=bcmap[id]||[{l:id}];
-  bc.innerHTML=cr.map((c,i)=>{
-    const last=i===cr.length-1;
-    return last?`<span class="bc-current">${c.l}</span>`:`<span class="bc-item" onclick="nav('${c.v}')">${c.l}</span><span class="bc-sep">›</span>`;
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById('view-' + id);
+  if (el) el.classList.add('active');
+  const bc = document.getElementById('breadcrumb');
+  const cr = bcmap[id] || [{l:id}];
+  bc.innerHTML = cr.map((c,i) => {
+    const last = i === cr.length-1;
+    return last
+      ? `<span class="bc-current">${c.l}</span>`
+      : `<span class="bc-item" onclick="nav('${c.v}')">${c.l}</span><span class="bc-sep">›</span>`;
   }).join('');
-  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
-  const sm={home:0,coredata:2,payroll:3,payrollrun:3,attendance:4,performance:5,setup:6};
-  const all=document.querySelectorAll('.nav-link');
-  const idx=sm[id]!==undefined?sm[id]:(['employees','departments','subdepartments'].includes(id)?2:-1);
-  if(idx>=0&&all[idx]) all[idx].classList.add('active');
-  const ab=document.getElementById('mainAddBtn');
-  if(id==='employees'){ab.textContent='＋ Add Employee';ab.onclick=()=>openModal('add');ab.style.display='';}
-  else if(id==='departments'){ab.textContent='＋ Add Department';ab.onclick=()=>showToast('✅ Department form');ab.style.display='';}
-  else if(id==='subdepartments'){ab.textContent='＋ Add Team';ab.onclick=()=>showToast('✅ Team form');ab.style.display='';}
-  else{ab.style.display='none';}
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  const sm = {home:0,coredata:2,payroll:3,payrollrun:3,attendance:4,performance:5,setup:6};
+  const all = document.querySelectorAll('.nav-link');
+  const idx = sm[id]!==undefined ? sm[id] : (['employees','departments','subdepartments'].includes(id) ? 2 : -1);
+  if (idx >= 0 && all[idx]) all[idx].classList.add('active');
+  const ab = document.getElementById('mainAddBtn');
+  if (id==='employees') { ab.textContent='＋ Add Employee'; ab.onclick=()=>openModal('add'); ab.style.display=''; }
+  else if (id==='departments') { ab.textContent='＋ Add Department'; ab.onclick=()=>showToast('Department form'); ab.style.display=''; }
+  else if (id==='subdepartments') { ab.textContent='＋ Add Team'; ab.onclick=()=>showToast('Team form'); ab.style.display=''; }
+  else { ab.style.display='none'; }
 }
 
-function renderEmp(){
-  document.getElementById('empBody').innerHTML=employees.map(e=>{
-    const s=e.nat==='Saudi';
-    const idH=s?`<span class="chip" style="background:var(--teal-lt);color:var(--teal)">${e.natid||'—'}</span>`:`<span class="chip" style="background:var(--amber-lt);color:var(--amber)">${e.iqama||'—'}</span>`;
-    const d=du(e.iqamaExp);
-    let ex=s?`<span class="dim-t">N/A</span>`:'';
-    if(!s){if(!e.iqamaExp)ex=`<span class="dim-t">—</span>`;else if(d<0)ex=`<span class="warn-t">⚠ Expired</span>`;else if(d<30)ex=`<span class="warn-t">⚠${d}d</span>`;else ex=`<span class="dim-t">${fdt(e.iqamaExp)}</span>`;}
-    const gc=e.gosi?`<span style="color:var(--emerald);font-weight:700;font-size:11.5px">✓</span>`:`<span style="color:var(--rose);font-weight:700;font-size:11.5px">✗</span>`;
-    const sc={active:'p-active',probation:'p-probation',inactive:'p-inactive'}[e.status];
-    const sl={active:'Active',probation:'Probation',inactive:'Inactive'}[e.status];
+
+// ═══════════════════════════════════════
+// RENDER FUNCTIONS
+// ═══════════════════════════════════════
+const ini  = (f,l) => (f[0]||'').toUpperCase() + (l[0]||'').toUpperCase();
+const fdt  = d => d ? new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+const du   = d => d ? Math.ceil((new Date(d)-new Date())/86400000) : null;
+
+function renderEmp(filter='') {
+  const list = filter
+    ? employees.filter(e => (e.first+' '+e.last+' '+e.id+' '+e.dept).toLowerCase().includes(filter.toLowerCase()))
+    : employees;
+  document.getElementById('empCt').textContent = `${list.length} of ${employees.length}`;
+  document.getElementById('empBody').innerHTML = list.map(e => {
+    const s = e.nat === 'Saudi';
+    const idH = s
+      ? `<span class="chip" style="background:var(--teal-lt);color:var(--teal)">${e.natid||'—'}</span>`
+      : `<span class="chip" style="background:var(--amber-lt);color:var(--amber)">${e.iqama||'—'}</span>`;
+    const d = du(e.iqamaExp);
+    let ex = s ? `<span class="dim-t">N/A</span>` : '';
+    if (!s) {
+      if (!e.iqamaExp) ex = `<span class="dim-t">—</span>`;
+      else if (d < 0) ex = `<span class="warn-t">⚠ Expired</span>`;
+      else if (d < 30) ex = `<span class="warn-t">⚠ ${d}d</span>`;
+      else ex = `<span class="dim-t">${fdt(e.iqamaExp)}</span>`;
+    }
+    const gc = e.gosi
+      ? `<span style="color:var(--emerald);font-weight:700;font-size:11.5px">✓</span>`
+      : `<span style="color:var(--rose);font-weight:700;font-size:11.5px">✗</span>`;
+    const sc = {active:'p-active',probation:'p-probation',inactive:'p-inactive'}[e.status];
+    const sl = {active:'Active',probation:'Probation',inactive:'Inactive'}[e.status];
     return `<tr onclick="openModal('view','${e.id}')">
       <td><span class="chip" style="background:var(--ind-lt);color:var(--ind)">${e.id}</span></td>
       <td><div class="ec"><div class="eav" style="background:${e.color}">${ini(e.first,e.last)}</div><div><div class="ename">${e.first} ${e.last}</div><div class="erole">${e.pos}</div></div></div></td>
@@ -1007,33 +1328,49 @@ function renderEmp(){
       <td><span class="pill ${s?'p-saudi':'p-expat'}">${s?'🇸🇦 Saudi':'🌍 '+e.nat}</span></td>
       <td>${idH}</td><td>${ex}</td><td>${gc}</td>
       <td><span class="pill ${sc}"><span class="pdot"></span>${sl}</span></td>
-      <td onclick="event.stopPropagation()"><div class="ra"><button class="btn btn-secondary btn-xs" onclick="openModal('edit','${e.id}')">✏</button><button class="btn btn-danger btn-xs" onclick="delEmp('${e.id}')">✕</button></div></td>
+      <td onclick="event.stopPropagation()"><div class="ra">
+        <button class="btn btn-secondary btn-xs" onclick="openModal('edit','${e.id}')">✏</button>
+        <button class="btn btn-danger btn-xs" onclick="delEmp('${e.id}')">✕</button>
+      </div></td>
     </tr>`;
   }).join('');
 }
-function delEmp(id){if(!confirm('Remove?'))return;const i=employees.findIndex(e=>e.id===id);if(i>-1){employees.splice(i,1);renderEmp();showToast('Employee removed','warn');}}
 
-function renderDepts(){
-  document.getElementById('deptGrid').innerHTML=departments.map(d=>{
-    const p=Math.round((d.count/d.budget)*100);
-    const av=d.head.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-    const subs=d.subs.map(s=>`<span class="dc-sub-tag">${s}</span>`).join('');
+function filterEmpTable(v) { renderEmp(v||''); }
+
+async function delEmp(id) {
+  if (!confirm('Remove this employee?')) return;
+  const i = employees.findIndex(e => e.id === id);
+  if (i > -1) { employees.splice(i,1); renderEmp(); showToast('Employee removed','warn'); await autoSave(); }
+}
+
+function renderDepts() {
+  document.getElementById('deptGrid').innerHTML = departments.map(d => {
+    const p = Math.round((d.count/d.budget)*100);
+    const av = d.head.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
     return `<div class="dc">
       <div class="dc-stripe" style="background:linear-gradient(90deg,${d.color},${d.color}60)"></div>
       <div class="dc-body">
         <div class="dc-top"><div class="dc-ico" style="background:${d.color}15">${d.icon}</div><div><div class="dc-name">${d.name}</div><div class="dc-code">${d.ar} · ${d.id}</div></div></div>
-        <div class="dc-stats"><div class="dc-stat"><div class="dc-sv" style="color:${d.color}">${d.count}</div><div class="dc-sl">Staff</div></div><div class="dc-stat"><div class="dc-sv">${d.subs.length}</div><div class="dc-sl">Teams</div></div><div class="dc-stat"><div class="dc-sv">${p}%</div><div class="dc-sl">Fill</div></div></div>
+        <div class="dc-stats">
+          <div class="dc-stat"><div class="dc-sv" style="color:${d.color}">${d.count}</div><div class="dc-sl">Staff</div></div>
+          <div class="dc-stat"><div class="dc-sv">${d.subs.length}</div><div class="dc-sl">Teams</div></div>
+          <div class="dc-stat"><div class="dc-sv">${p}%</div><div class="dc-sl">Fill</div></div>
+        </div>
         <div class="dc-bar-wrap"><div class="dc-bar" style="width:${p}%;background:linear-gradient(90deg,${d.color},${d.color}88)"></div></div>
-        <div class="dc-subs">${subs}</div>
+        <div class="dc-subs">${d.subs.map(s=>`<span class="dc-sub-tag">${s}</span>`).join('')}</div>
       </div>
-      <div class="dc-ft"><div class="dc-mgr"><div class="dc-mav" style="background:${d.hc}">${av}</div>${d.head}</div><button class="btn btn-secondary btn-xs" onclick="event.stopPropagation();showToast('Edit: ${d.name}')">✏ Edit</button></div>
+      <div class="dc-ft">
+        <div class="dc-mgr"><div class="dc-mav" style="background:${d.hc}">${av}</div>${d.head}</div>
+        <button class="btn btn-secondary btn-xs" onclick="event.stopPropagation();showToast('Edit: ${d.name}')">✏ Edit</button>
+      </div>
     </div>`;
   }).join('');
 }
 
-function renderSubDepts(){
-  document.getElementById('subDeptBody').innerHTML=subDepts.map(sd=>{
-    const av=sd.lead.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+function renderSubDepts() {
+  document.getElementById('subDeptBody').innerHTML = subDepts.map(sd => {
+    const av = sd.lead.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
     return `<tr>
       <td><span class="chip" style="background:${sd.color}15;color:${sd.color}">${sd.code}</span></td>
       <td><div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:2px;background:${sd.color};display:inline-block;flex-shrink:0"></span><span style="font-weight:600">${sd.name}</span></div></td>
@@ -1047,58 +1384,131 @@ function renderSubDepts(){
   }).join('');
 }
 
-let editId=null;
-function openModal(mode,id){
-  editId=id||null;document.getElementById('modalBd').classList.add('open');
-  switchTab(document.querySelector('.m-tabs .mtab'),'tp-pers');handleNat();
-  if(mode==='add'){document.getElementById('mTitle').textContent='Add New Employee';document.getElementById('mTag').textContent='NEW';document.getElementById('mSave').textContent='💾 Save';document.getElementById('mSave').onclick=saveEmp;}
-  else if(mode==='edit'){const e=employees.find(x=>x.id===id);document.getElementById('mTitle').textContent=`Edit — ${e.first} ${e.last}`;document.getElementById('mTag').textContent='EDIT';document.getElementById('mSave').textContent='💾 Update';document.getElementById('mSave').onclick=saveEmp;if(document.getElementById('f_first'))document.getElementById('f_first').value=e.first;if(document.getElementById('f_last'))document.getElementById('f_last').value=e.last;if(document.getElementById('f_empid'))document.getElementById('f_empid').value=e.id;if(document.getElementById('f_title'))document.getElementById('f_title').value=e.pos;}
-  else if(mode==='view'){const e=employees.find(x=>x.id===id);document.getElementById('mTitle').textContent=`${e.first} ${e.last}`;document.getElementById('mTag').textContent='PROFILE';document.getElementById('mSave').textContent='✏ Edit';document.getElementById('mSave').onclick=()=>openModal('edit',id);}
-}
-function closeModal(){document.getElementById('modalBd').classList.remove('open');}
-function handleNat(){const n=document.getElementById('f_nat');const s=n&&n.value==='Saudi';const ss=document.getElementById('saudiSec');const is=document.getElementById('iqamaSec');if(ss)ss.style.display=s?'block':'none';if(is)is.style.display=s?'none':'block';}
-function calcSal(){const g=id=>parseFloat(document.getElementById(id)?.value)||0;const t=g('f_basic')+g('f_housing')+g('f_transport')+g('f_moballow')+g('f_other');const el=document.getElementById('f_total');if(el)el.value=t>0?t.toLocaleString():'';}
-function saveEmp(){
-  const first=document.getElementById('f_first')?.value.trim();
-  const last=document.getElementById('f_last')?.value.trim();
-  const empid=document.getElementById('f_empid')?.value.trim();
-  if(!first||!last||!empid){showToast('Fill required fields','warn');return;}
-  const clrs=['#3D5AF1','#0D9488','#7C3AED','#D97706','#B45309','#E11D48','#0891B2'];
-  const data={id:empid,first,last,pos:document.getElementById('f_title')?.value||'—',dept:document.getElementById('f_dept')?.value||'—',nat:document.getElementById('f_nat')?.value||'Saudi',iqama:'',natid:'',iqamaExp:'',gosi:true,status:'active',color:clrs[Math.floor(Math.random()*clrs.length)]};
-  if(editId){const i=employees.findIndex(e=>e.id===editId);if(i>-1)employees[i]={...employees[i],...data,id:editId};showToast(`✅ ${first} ${last} updated`);}
-  else{if(employees.find(e=>e.id===empid)){showToast('ID already exists','warn');return;}employees.push(data);showToast(`✅ ${first} ${last} added`);}
-  renderEmp();closeModal();
-}
-function switchTab(el,pid){document.querySelectorAll('.m-tabs .mtab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));const p=document.getElementById(pid);if(p)p.classList.add('active');}
 
+// ═══════════════════════════════════════
+// EMPLOYEE MODAL
+// ═══════════════════════════════════════
+let editId = null;
+function openModal(mode, id) {
+  editId = id || null;
+  document.getElementById('modalBd').classList.add('open');
+  switchTab(document.querySelector('.m-tabs .mtab'), 'tp-pers');
+  handleNat();
+  if (mode === 'add') {
+    document.getElementById('mTitle').textContent = 'Add New Employee';
+    document.getElementById('mTag').textContent = 'NEW';
+    document.getElementById('mSave').textContent = '💾 Save';
+    document.getElementById('mSave').onclick = saveEmp;
+  } else if (mode === 'edit') {
+    const e = employees.find(x => x.id === id);
+    document.getElementById('mTitle').textContent = `Edit — ${e.first} ${e.last}`;
+    document.getElementById('mTag').textContent = 'EDIT';
+    document.getElementById('mSave').textContent = '💾 Update';
+    document.getElementById('mSave').onclick = saveEmp;
+    if (document.getElementById('f_first')) document.getElementById('f_first').value = e.first;
+    if (document.getElementById('f_last'))  document.getElementById('f_last').value  = e.last;
+    if (document.getElementById('f_empid')) document.getElementById('f_empid').value = e.id;
+    if (document.getElementById('f_title')) document.getElementById('f_title').value = e.pos;
+  } else if (mode === 'view') {
+    const e = employees.find(x => x.id === id);
+    document.getElementById('mTitle').textContent = `${e.first} ${e.last}`;
+    document.getElementById('mTag').textContent = 'PROFILE';
+    document.getElementById('mSave').textContent = '✏ Edit';
+    document.getElementById('mSave').onclick = () => openModal('edit', id);
+  }
+}
+function closeModal() { document.getElementById('modalBd').classList.remove('open'); }
+
+function handleNat() {
+  const n = document.getElementById('f_nat');
+  const s = n && n.value === 'Saudi';
+  const ss = document.getElementById('saudiSec');
+  const is = document.getElementById('iqamaSec');
+  if (ss) ss.style.display = s ? 'block' : 'none';
+  if (is) is.style.display = s ? 'none'  : 'block';
+}
+
+function calcSal() {
+  const g = id => parseFloat(document.getElementById(id)?.value) || 0;
+  const t = g('f_basic')+g('f_housing')+g('f_transport')+g('f_moballow')+g('f_other');
+  const el = document.getElementById('f_total');
+  if (el) el.value = t > 0 ? t.toLocaleString() : '';
+}
+
+async function saveEmp() {
+  const first  = document.getElementById('f_first')?.value.trim();
+  const last   = document.getElementById('f_last')?.value.trim();
+  const empid  = document.getElementById('f_empid')?.value.trim();
+  if (!first || !last || !empid) { showToast('Fill required fields','warn'); return; }
+  const clrs = ['#3D5AF1','#0D9488','#7C3AED','#D97706','#B45309','#E11D48','#0891B2'];
+  const data = {
+    id: empid, first, last,
+    pos:   document.getElementById('f_title')?.value || '—',
+    dept:  document.getElementById('f_dept')?.value  || '—',
+    nat:   document.getElementById('f_nat')?.value   || 'Saudi',
+    iqama:'', natid:'', iqamaExp:'', gosi:true, status:'active',
+    color: clrs[Math.floor(Math.random()*clrs.length)],
+  };
+  if (editId) {
+    const i = employees.findIndex(e => e.id === editId);
+    if (i > -1) employees[i] = {...employees[i], ...data, id: editId};
+    showToast(`✅ ${first} ${last} updated`);
+  } else {
+    if (employees.find(e => e.id === empid)) { showToast('Employee ID already exists','warn'); return; }
+    employees.push(data);
+    showToast(`✅ ${first} ${last} added`);
+  }
+  renderEmp();
+  closeModal();
+  await autoSave();
+}
+
+function switchTab(el, pid) {
+  document.querySelectorAll('.m-tabs .mtab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.tp').forEach(p => p.classList.remove('active'));
+  const p = document.getElementById(pid);
+  if (p) p.classList.add('active');
+}
+
+
+// ═══════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════
 let tt;
-function showToast(msg,type='ok'){const icons={ok:'✅',warn:'⚠️',err:'❌',info:'ℹ️'};document.getElementById('tIcon').textContent=icons[type]||'✅';document.getElementById('tMsg').textContent=msg;const t=document.getElementById('toast');t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2800);}
+function showToast(msg, type='ok') {
+  const icons = {ok:'✅',warn:'⚠️',err:'❌',info:'ℹ️'};
+  document.getElementById('tIcon').textContent = icons[type] || '✅';
+  document.getElementById('tMsg').textContent  = msg;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(tt);
+  tt = setTimeout(() => t.classList.remove('show'), 2800);
+}
 
 
-/* ══ PAYROLL RUN ══ */
+// ═══════════════════════════════════════
+// PAYROLL RUN
+// ═══════════════════════════════════════
 let selectedPeriod = 'Feb 2026';
-
 function selectPeriod(el, period) {
   document.querySelectorAll('.pc').forEach(p => p.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedPeriod = period;
+  el.classList.add('selected'); selectedPeriod = period;
 }
 
 function prGoStep(n) {
-  // hide all step panels
   for (let i = 1; i <= 4; i++) {
     const p = document.getElementById('pr-s' + i);
     if (p) p.style.display = 'none';
     const s = document.getElementById('prstep-' + i);
-    if (s) { s.classList.remove('active', 'done'); if (i < n) s.classList.add('done'); }
+    if (s) { s.classList.remove('active','done'); if (i < n) s.classList.add('done'); }
   }
   const cur = document.getElementById('pr-s' + n);
   if (cur) cur.style.display = '';
   const curStep = document.getElementById('prstep-' + n);
   if (curStep) curStep.classList.add('active');
-
-  if (n === 2) { renderPayrollTable(); }
-  if (n === 3) { runPayrollAnimation(); }
+  if (n === 2) renderPayrollTable();
+  if (n === 3) runPayrollAnimation();
 }
 
 const payrollData = [
@@ -1110,20 +1520,21 @@ const payrollData = [
   {id:'EMP006',name:'Tariq Al-Otaibi',dept:'Marketing',basic:8500,housing:2550,transport:850,other:400,gosiPct:0.09,wps:true,color:'#B45309'},
 ];
 
-function renderPayrollTable(filter = '') {
+function renderPayrollTable(filter='') {
   const fmt = n => n.toLocaleString('en-US');
-  const rows = payrollData.filter(e => !filter || e.name.toLowerCase().includes(filter.toLowerCase()) || e.id.toLowerCase().includes(filter));
+  const rows = payrollData.filter(e => !filter || e.name.toLowerCase().includes(filter) || e.id.toLowerCase().includes(filter));
   document.getElementById('pr-tbl-ct').textContent = `Showing ${rows.length} of 247`;
   document.getElementById('pr-emp-body').innerHTML = rows.map(e => {
-    const gross = e.basic + e.housing + e.transport + e.other;
-    const gosi = Math.round(e.basic * e.gosiPct);
-    const net = gross - gosi;
-    const wpsPill = e.wps
+    const gross = e.basic+e.housing+e.transport+e.other;
+    const gosi  = Math.round(e.basic * e.gosiPct);
+    const net   = gross - gosi;
+    const wps   = e.wps
       ? `<span class="pill p-active" style="font-size:9px"><span class="pdot"></span>Ready</span>`
       : `<span class="pill p-probation" style="font-size:9px"><span class="pdot"></span>Pending</span>`;
+    const av = e.name.split(' ').map(w=>w[0]).join('').slice(0,2);
     return `<tr>
       <td><span class="chip" style="background:var(--ind-lt);color:var(--ind)">${e.id}</span></td>
-      <td><div class="ec"><div class="eav" style="background:${e.color};width:26px;height:26px;font-size:9px">${e.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div><span style="font-weight:600;font-size:12px">${e.name}</span></div></td>
+      <td><div class="ec"><div class="eav" style="background:${e.color};width:26px;height:26px;font-size:9px">${av}</div><span style="font-weight:600;font-size:12px">${e.name}</span></div></td>
       <td><span class="dim-t">${e.dept}</span></td>
       <td class="sal-cell" style="text-align:right">${fmt(e.basic)}</td>
       <td class="sal-cell" style="text-align:right">${fmt(e.housing)}</td>
@@ -1132,7 +1543,7 @@ function renderPayrollTable(filter = '') {
       <td class="sal-cell" style="text-align:right;font-weight:700;color:var(--cyan)">${fmt(gross)}</td>
       <td class="sal-cell" style="text-align:right;color:var(--rose)">-${fmt(gosi)}</td>
       <td class="sal-cell" style="text-align:right;font-weight:700;color:var(--emerald)">${fmt(net)}</td>
-      <td>${wpsPill}</td>
+      <td>${wps}</td>
     </tr>`;
   }).join('');
 }
@@ -1141,34 +1552,27 @@ function filterPayrollTable(v) { renderPayrollTable(v); }
 
 function runPayrollAnimation() {
   const steps = [
-    {id:'rsl-1', label:'Validating employee records', delay:600},
-    {id:'rsl-2', label:'Calculating salaries & allowances', delay:1400},
-    {id:'rsl-3', label:'Computing GOSI contributions', delay:2400},
-    {id:'rsl-4', label:'Applying deductions & adjustments', delay:3400},
-    {id:'rsl-5', label:'Generating payslips (247 employees)', delay:4600},
-    {id:'rsl-6', label:'Preparing WPS bank file', delay:5800},
-    {id:'rsl-7', label:'Finalising payroll session', delay:6800},
+    {id:'rsl-1',delay:600},{id:'rsl-2',delay:1400},{id:'rsl-3',delay:2400},
+    {id:'rsl-4',delay:3400},{id:'rsl-5',delay:4600},{id:'rsl-6',delay:5800},{id:'rsl-7',delay:6800},
   ];
   const headlines = ['Validating employee records…','Calculating salaries…','Computing GOSI…','Applying deductions…','Generating 247 payslips…','Preparing WPS file…','Finalising…'];
-  steps.forEach((s, i) => {
-    // mark previous as done, current as running
+  steps.forEach((s,i) => {
     setTimeout(() => {
       if (i > 0) {
         const prev = document.getElementById(steps[i-1].id);
-        if (prev) { prev.querySelector('.rsl-ico').className = 'rsl-ico done'; prev.querySelector('.rsl-ico').textContent = '✓'; }
+        if (prev) { prev.querySelector('.rsl-ico').className='rsl-ico done'; prev.querySelector('.rsl-ico').textContent='✓'; }
       }
       const cur = document.getElementById(s.id);
-      if (cur) { cur.querySelector('.rsl-ico').className = 'rsl-ico running'; cur.querySelector('.rsl-ico').textContent = '⚙'; }
+      if (cur) { cur.querySelector('.rsl-ico').className='rsl-ico running'; cur.querySelector('.rsl-ico').textContent='⚙'; }
       const hl = document.getElementById('run-headline');
       if (hl) hl.textContent = headlines[i];
     }, s.delay);
   });
-  // Complete
   setTimeout(() => {
     const last = document.getElementById(steps[steps.length-1].id);
-    if (last) { last.querySelector('.rsl-ico').className = 'rsl-ico done'; last.querySelector('.rsl-ico').textContent = '✓'; }
+    if (last) { last.querySelector('.rsl-ico').className='rsl-ico done'; last.querySelector('.rsl-ico').textContent='✓'; }
     const spinner = document.getElementById('run-spinner');
-    if (spinner) { spinner.style.borderTopColor = 'var(--emerald)'; spinner.style.animationDuration = '0.3s'; }
+    if (spinner) { spinner.style.borderTopColor='var(--emerald)'; spinner.style.animationDuration='0.3s'; }
     const hl = document.getElementById('run-headline');
     if (hl) hl.textContent = '✅ Payroll complete!';
     const sub = document.getElementById('run-sub');
@@ -1177,73 +1581,10 @@ function runPayrollAnimation() {
   }, 7800);
 }
 
-function exportPayrollPreview() {
-  const wb = XLSX.utils.book_new();
-  const hdrs = ['Emp ID','Employee','Department','Basic SAR','Housing','Transport','Other Allow.','Gross SAR','GOSI Ded.','Net Pay SAR','WPS Status'];
-  const rows = payrollData.map(e => {
-    const gross = e.basic + e.housing + e.transport + e.other;
-    const gosi = Math.round(e.basic * e.gosiPct);
-    return [e.id, e.name, e.dept, e.basic, e.housing, e.transport, e.other, gross, gosi, gross - gosi, e.wps ? 'Ready' : 'Pending'];
-  });
-  const ws = XLSX.utils.aoa_to_sheet([hdrs, ...rows]);
-  ws['!cols'] = [10,24,16,12,12,12,14,14,12,14,12].map(w=>({wch:w}));
-  applyHdrStyle(ws, hdrs.length, 0);
-  rows.forEach((_, i) => applyRowStyle(ws, i+1, hdrs.length, i%2===1));
-  XLSX.utils.book_append_sheet(wb, ws, 'Payroll Preview');
-  dlXlsx(wb, 'HCM_Payroll_Preview_Feb2026.xlsx');
-  showToast('✅ Payroll preview exported');
-}
 
-function exportPayrollResult() {
-  const wb = XLSX.utils.book_new();
-  // Sheet 1: Summary
-  const summRows = [
-    ['HCM PRO KSA — PAYROLL SESSION', ''],
-    ['Period', 'February 2026'],
-    ['Session ID', 'PAY-2026-02-001'],
-    ['Generated By', 'HR Admin'],
-    ['Generated On', '23 Feb 2026'],
-    ['', ''],
-    ['SUMMARY', ''],
-    ['Total Employees', 247],
-    ['Gross Payroll (SAR)', 2100000],
-    ['Total Deductions (SAR)', 189000],
-    ['Net Payable (SAR)', 1911000],
-    ['GOSI Saudi Contribution (SAR)', 111150],
-    ['GOSI Expat Contribution (SAR)', 24700],
-    ['Employer GOSI (SAR)', 148200],
-    ['', ''],
-    ['WPS STATUS', ''],
-    ['Al Rajhi Bank', 124],
-    ['SNB', 67],
-    ['Riyad Bank', 38],
-    ['Alinma Bank', 10],
-    ['Pending IBAN', 8],
-  ];
-  const wsSumm = XLSX.utils.aoa_to_sheet(summRows);
-  wsSumm['!cols'] = [{wch:30},{wch:20}];
-  XLSX.utils.book_append_sheet(wb, wsSumm, 'Summary');
-
-  // Sheet 2: Detail
-  const hdrs = ['Emp ID','Employee','Department','Basic SAR','Housing','Transport','Other Allow.','Gross SAR','GOSI Ded.','Net Pay SAR','WPS Status'];
-  const rows = payrollData.map(e => {
-    const gross = e.basic + e.housing + e.transport + e.other;
-    const gosi = Math.round(e.basic * e.gosiPct);
-    return [e.id, e.name, e.dept, e.basic, e.housing, e.transport, e.other, gross, gosi, gross-gosi, e.wps?'Ready':'Pending'];
-  });
-  const ws2 = XLSX.utils.aoa_to_sheet([hdrs,...rows]);
-  ws2['!cols'] = [10,24,16,12,12,12,14,14,12,14,12].map(w=>({wch:w}));
-  applyHdrStyle(ws2, hdrs.length, 0);
-  rows.forEach((_,i) => applyRowStyle(ws2, i+1, hdrs.length, i%2===1));
-  XLSX.utils.book_append_sheet(wb, ws2, 'Payroll Detail');
-
-  dlXlsx(wb, 'HCM_Payroll_Feb2026_FINAL.xlsx');
-  showToast('✅ Payroll report exported — 2 sheets');
-}
-
-
-/* ══ EXCEL EXPORT ══ */
-let currentView='home';
+// ═══════════════════════════════════════
+// EXCEL EXPORT
+// ═══════════════════════════════════════
 function applyHdrStyle(ws,cols,row){for(let c=0;c<cols;c++){const ref=XLSX.utils.encode_cell({r:row,c});if(!ws[ref])return;ws[ref].s={font:{bold:true,color:{rgb:'FFFFFF'},name:'Arial',sz:10},fill:{fgColor:{rgb:'162054'},patternType:'solid'},alignment:{horizontal:'center',vertical:'center'},border:{top:{style:'thin',color:{rgb:'E2E8F8'}},bottom:{style:'thin',color:{rgb:'E2E8F8'}},left:{style:'thin',color:{rgb:'E2E8F8'}},right:{style:'thin',color:{rgb:'E2E8F8'}}}};}}
 function applyRowStyle(ws,row,cols,alt){for(let c=0;c<cols;c++){const ref=XLSX.utils.encode_cell({r:row,c});if(!ws[ref])ws[ref]={v:'',t:'s'};ws[ref].s={font:{name:'Arial',sz:10},fill:{fgColor:{rgb:alt?'EEF2FF':'FFFFFF'},patternType:'solid'},alignment:{vertical:'center'},border:{top:{style:'thin',color:{rgb:'E2E8F8'}},bottom:{style:'thin',color:{rgb:'E2E8F8'}},left:{style:'thin',color:{rgb:'E2E8F8'}},right:{style:'thin',color:{rgb:'E2E8F8'}}}};}}
 function dlXlsx(wb,name){const out=XLSX.write(wb,{bookType:'xlsx',type:'array',cellStyles:true});const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download=name;a.click();}
@@ -1251,58 +1592,70 @@ function makeSheet(headers,rows,colWidths){const ws=XLSX.utils.aoa_to_sheet([hea
 
 function exportEmployees(){
   const wb=XLSX.utils.book_new();
-  const hdrs=['Emp ID','Full Name','Position','Department','Nationality','NID / Iqama No.','Iqama Expiry','GOSI Enrolled','Status'];
+  const hdrs=['Emp ID','Full Name','Position','Department','Nationality','NID / Iqama','Iqama Expiry','GOSI','Status'];
   const rows=employees.map(e=>[e.id,e.first+' '+e.last,e.pos,e.dept,e.nat,e.nat==='Saudi'?(e.natid||'—'):(e.iqama||'—'),e.iqamaExp||'N/A',e.gosi?'Yes':'No',e.status.charAt(0).toUpperCase()+e.status.slice(1)]);
   XLSX.utils.book_append_sheet(wb,makeSheet(hdrs,rows,[10,24,22,16,14,20,14,12,12]),'Employees');
-  const tot=employees.length,saudi=employees.filter(e=>e.nat==='Saudi').length,gosiOk=employees.filter(e=>e.gosi).length;
-  const expiring=employees.filter(e=>{if(e.nat==='Saudi'||!e.iqamaExp)return false;const d=Math.ceil((new Date(e.iqamaExp)-new Date())/86400000);return d>=0&&d<30;}).length;
-  const expired=employees.filter(e=>{if(e.nat==='Saudi'||!e.iqamaExp)return false;return new Date(e.iqamaExp)<new Date();}).length;
-  const sHdrs=['Metric','Value','Pct'];
-  const sRows=[['WORKFORCE','',''],['Total Employees',tot,''],['Saudi Nationals',saudi,(saudi/tot*100).toFixed(1)+'%'],['Expatriates',tot-saudi,((tot-saudi)/tot*100).toFixed(1)+'%'],['','',''],['STATUS','',''],['Active',employees.filter(e=>e.status==='active').length,''],['On Probation',employees.filter(e=>e.status==='probation').length,''],['Inactive',employees.filter(e=>e.status==='inactive').length,''],['','',''],['COMPLIANCE','',''],['GOSI Enrolled',gosiOk,''],['GOSI Pending',tot-gosiOk,''],['Iqama Expiring <30d',expiring,''],['Iqama Expired',expired,'']];
-  const ws2=XLSX.utils.aoa_to_sheet([sHdrs,...sRows]);ws2['!cols']=[{wch:28},{wch:14},{wch:10}];applyHdrStyle(ws2,3,0);sRows.forEach((_,i)=>applyRowStyle(ws2,i+1,3,i%2===1));
+  const tot=employees.length,saudi=employees.filter(e=>e.nat==='Saudi').length;
+  const sRows=[['WORKFORCE','',''],['Total Employees',tot,''],['Saudi Nationals',saudi,(saudi/tot*100).toFixed(1)+'%'],['Expatriates',tot-saudi,((tot-saudi)/tot*100).toFixed(1)+'%'],['','',''],['Active',employees.filter(e=>e.status==='active').length,''],['On Probation',employees.filter(e=>e.status==='probation').length,''],['Inactive',employees.filter(e=>e.status==='inactive').length,'']];
+  const ws2=XLSX.utils.aoa_to_sheet([['Metric','Value','Pct'],...sRows]);ws2['!cols']=[{wch:28},{wch:14},{wch:10}];applyHdrStyle(ws2,3,0);sRows.forEach((_,i)=>applyRowStyle(ws2,i+1,3,i%2===1));
   XLSX.utils.book_append_sheet(wb,ws2,'Summary');
   dlXlsx(wb,'HCM_Employees_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  showToast('✅ Employees exported — 2 sheets');
+  showToast('✅ Employees exported');
 }
 
 function exportDepartments(){
   const wb=XLSX.utils.book_new();
-  const dHdrs=['Dept ID','Department Name','Arabic Name','Department Head','Headcount','Sub-Teams','Fill Rate %','Budget HC'];
+  const dHdrs=['Dept ID','Department Name','Arabic','Head','Headcount','Teams','Fill %','Budget HC'];
   const dRows=departments.map(d=>[d.id,d.name,d.ar,d.head,d.count,d.subs.length,Math.round(d.count/d.budget*100)+'%',d.budget]);
-  XLSX.utils.book_append_sheet(wb,makeSheet(dHdrs,dRows,[10,18,22,24,12,12,12,12]),'Departments');
-  const sdHdrs=['Code','Team Name','Parent Department','Team Lead','Headcount','Cost Center'];
+  XLSX.utils.book_append_sheet(wb,makeSheet(dHdrs,dRows,[10,18,22,24,12,10,10,12]),'Departments');
+  const sdHdrs=['Code','Team Name','Parent Dept','Lead','HC','Cost Center'];
   const sdRows=subDepts.map(sd=>[sd.code,sd.name,sd.parent,sd.lead,sd.count,sd.cc]);
-  XLSX.utils.book_append_sheet(wb,makeSheet(sdHdrs,sdRows,[12,24,18,26,12,14]),'Sub-Departments');
+  XLSX.utils.book_append_sheet(wb,makeSheet(sdHdrs,sdRows,[12,24,18,26,10,14]),'Sub-Departments');
   dlXlsx(wb,'HCM_Departments_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  showToast('✅ Departments exported — 2 sheets');
+  showToast('✅ Departments exported');
 }
 
-function exportFullReport(){
+function exportPayrollPreview(){
   const wb=XLSX.utils.book_new();
-  const tot=employees.length,saudi=employees.filter(e=>e.nat==='Saudi').length;
-  const dashRows=[['HCM PRO KSA — FULL DATA EXPORT',''],['Generated',new Date().toLocaleDateString('en-GB')],['',''],['WORKFORCE SUMMARY',''],['Total Employees',tot],['Saudi Nationals',saudi],['Expatriates',tot-saudi],['Active Employees',employees.filter(e=>e.status==='active').length],['On Probation',employees.filter(e=>e.status==='probation').length],['Inactive',employees.filter(e=>e.status==='inactive').length],['',''],['COMPLIANCE',''],['GOSI Enrolled',employees.filter(e=>e.gosi).length],['GOSI Pending',tot-employees.filter(e=>e.gosi).length],['',''],['ORGANISATION',''],['Departments',departments.length],['Sub-Departments',subDepts.length],['',''],['PAYROLL (Feb 2026)',''],['Monthly Payroll (SAR)','2,100,000'],['Processed Staff',239],['WPS Registered',231]];
-  const wsDash=XLSX.utils.aoa_to_sheet(dashRows);wsDash['!cols']=[{wch:30},{wch:20}];
-  if(wsDash['A1'])wsDash['A1'].s={font:{bold:true,sz:13,name:'Arial',color:{rgb:'162054'}},fill:{fgColor:{rgb:'EEF2FF'},patternType:'solid'}};
-  XLSX.utils.book_append_sheet(wb,wsDash,'Dashboard');
-  const eHdrs=['Emp ID','Full Name','Position','Department','Nationality','NID / Iqama','Iqama Expiry','GOSI','Status'];
-  const eRows=employees.map(e=>[e.id,e.first+' '+e.last,e.pos,e.dept,e.nat,e.nat==='Saudi'?e.natid:e.iqama,e.iqamaExp||'N/A',e.gosi?'Yes':'No',e.status]);
-  XLSX.utils.book_append_sheet(wb,makeSheet(eHdrs,eRows,[10,24,22,16,14,20,14,10,12]),'Employees');
-  const dHdrs=['Dept ID','Department','Arabic','Head','Staff','Teams','Fill%'];
-  const dRows=departments.map(d=>[d.id,d.name,d.ar,d.head,d.count,d.subs.length,Math.round(d.count/d.budget*100)+'%']);
-  XLSX.utils.book_append_sheet(wb,makeSheet(dHdrs,dRows,[10,18,22,24,10,10,10]),'Departments');
-  const sdHdrs=['Code','Team','Parent Dept','Lead','HC','Cost Center'];
-  const sdRows=subDepts.map(sd=>[sd.code,sd.name,sd.parent,sd.lead,sd.count,sd.cc]);
-  XLSX.utils.book_append_sheet(wb,makeSheet(sdHdrs,sdRows,[12,24,16,26,10,14]),'Sub-Departments');
-  dlXlsx(wb,'HCM_Full_Report_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  showToast('✅ Full report exported — 4 sheets');
+  const hdrs=['Emp ID','Employee','Department','Basic SAR','Housing','Transport','Other','Gross SAR','GOSI','Net Pay SAR','WPS'];
+  const rows=payrollData.map(e=>{const g=e.basic+e.housing+e.transport+e.other,gosi=Math.round(e.basic*e.gosiPct);return[e.id,e.name,e.dept,e.basic,e.housing,e.transport,e.other,g,gosi,g-gosi,e.wps?'Ready':'Pending'];});
+  const ws=XLSX.utils.aoa_to_sheet([hdrs,...rows]);ws['!cols']=[10,24,16,12,12,12,12,14,12,14,12].map(w=>({wch:w}));applyHdrStyle(ws,hdrs.length,0);rows.forEach((_,i)=>applyRowStyle(ws,i+1,hdrs.length,i%2===1));
+  XLSX.utils.book_append_sheet(wb,ws,'Payroll Preview');
+  dlXlsx(wb,'HCM_Payroll_Preview_Feb2026.xlsx');
+  showToast('✅ Preview exported');
+}
+
+function exportPayrollResult(){
+  const wb=XLSX.utils.book_new();
+  const s=[['HCM PRO KSA — PAYROLL SESSION',''],['Period','February 2026'],['Session ID','PAY-2026-02-001'],['',''],['Total Employees',247],['Gross (SAR)',2100000],['Deductions (SAR)',189000],['Net Payable (SAR)',1911000]];
+  const ws=XLSX.utils.aoa_to_sheet(s);ws['!cols']=[{wch:28},{wch:18}];XLSX.utils.book_append_sheet(wb,ws,'Summary');
+  const hdrs=['Emp ID','Employee','Department','Basic SAR','Housing','Transport','Other','Gross SAR','GOSI','Net Pay SAR','WPS'];
+  const rows=payrollData.map(e=>{const g=e.basic+e.housing+e.transport+e.other,gosi=Math.round(e.basic*e.gosiPct);return[e.id,e.name,e.dept,e.basic,e.housing,e.transport,e.other,g,gosi,g-gosi,e.wps?'Ready':'Pending'];});
+  XLSX.utils.book_append_sheet(wb,makeSheet(hdrs,rows,[10,24,16,12,12,12,12,14,12,14,12]),'Payroll Detail');
+  dlXlsx(wb,'HCM_Payroll_Feb2026_FINAL.xlsx');
+  showToast('✅ Payroll exported');
 }
 
 function handleExport(){
   const map={employees:exportEmployees,departments:exportDepartments,subdepartments:exportDepartments};
-  (map[currentView]||exportFullReport)();
+  (map[currentView]||(() => {
+    const wb=XLSX.utils.book_new();
+    const ws=XLSX.utils.aoa_to_sheet([['HCM Pro KSA — Full Report'],['Generated',new Date().toLocaleDateString('en-GB')],['Employees',employees.length],['Departments',departments.length]]);
+    XLSX.utils.book_append_sheet(wb,ws,'Summary');
+    dlXlsx(wb,'HCM_Report_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    showToast('✅ Report exported');
+  }))();
 }
 
-renderEmp();renderDepts();renderSubDepts();handleNat();nav('home');
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+renderEmp();
+renderDepts();
+renderSubDepts();
+handleNat();
+nav('home');
 </script>
 </body>
 </html>

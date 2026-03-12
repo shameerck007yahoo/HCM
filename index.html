@@ -501,7 +501,7 @@ tbody tr:hover .ra{opacity:1;}
     <div class="drive-dot on" id="sidebarDot"></div>
     <div style="flex:1">
       <div id="sidebarDriveLabel" style="font-size:11.5px;font-weight:600;color:rgba(255,255,255,0.8)">Drive Synced</div>
-      <div id="sidebarDriveUser" style="font-size:9.5px;color:rgba(255,255,255,0.35);margin-top:1px">AES-256 encrypted</div>
+      <div id="sidebarDriveUser" style="font-size:9.5px;color:rgba(255,255,255,0.35);margin-top:1px">App data synced</div>
     </div>
     <span class="drive-sync-ico" id="sidebarSyncIco">☁️</span>
   </div>
@@ -916,8 +916,8 @@ tbody tr:hover .ra{opacity:1;}
           <div style="font-size:9.5px;color:var(--t3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Employees</div>
         </div>
       </div>
-      <div class="drive-info-row"><div class="drive-info-ico">📁</div><div class="drive-info-text"><strong>My Drive → HCM Pro KSA → hcm_data.json</strong><span>Visible in your Google Drive — open and view any time</span></div></div>
-      <div class="drive-info-row" style="margin-bottom:0"><div class="drive-info-ico">🔄</div><div class="drive-info-text"><strong>Auto-synced on every change</strong><span>Add/edit/delete employees updates the file instantly. Any browser, any device.</span></div></div>
+      <div class="drive-info-row"><div class="drive-info-ico">☁️</div><div class="drive-info-text"><strong>Stored in Google Drive App Data</strong><span>Private to this app — same file on every browser and device you sign in from</span></div></div>
+      <div class="drive-info-row" style="margin-bottom:0"><div class="drive-info-ico">🔄</div><div class="drive-info-text"><strong>Auto-synced on every change</strong><span>Add/edit/delete saves instantly. Open a new browser and sign in — your data will be there.</span></div></div>
     </div>
     <div class="m-ft">
       <button class="btn btn-secondary btn-sm" onclick="doLogout()">⏻ Sign Out</button>
@@ -938,23 +938,20 @@ tbody tr:hover .ra{opacity:1;}
 // ══════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════
-const GOOGLE_CLIENT_ID  = '141075172405-6kt37p0jv3atb5sfp5lmv8a38i494nq8.apps.googleusercontent.com';
-// drive.file = user can SEE the file in their Google Drive
-const DRIVE_SCOPE       = 'https://www.googleapis.com/auth/drive.file';
-const DRIVE_FOLDER_NAME = 'HCM Pro KSA';       // visible folder in My Drive
-const DRIVE_FILE_NAME   = 'hcm_data.json';     // plain JSON — no encryption so it's readable
-// We no longer encrypt so the file is transparent and readable in Drive
-// (encryption was causing cross-browser key issues and hiding the file)
+const GOOGLE_CLIENT_ID = '141075172405-6kt37p0jv3atb5sfp5lmv8a38i494nq8.apps.googleusercontent.com';
+// drive.appdata = private folder tied to app+user account
+// Works identically on ALL browsers/devices — no file ID caching needed
+const DRIVE_SCOPE     = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_FILE_NAME = 'hcm_data_v2.json';
 
 // ══════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════
 let accessToken   = null;
 let tokenClient   = null;
-let currentUser   = null;   // { name, email, picture }
+let currentUser   = null;
 let syncCount     = 0;
-let driveFileId   = null;   // cached file ID (session only)
-let driveFolderId = null;   // cached folder ID (session only)
+let driveFileId   = null;  // session cache only — never trusted on login
 let lastSyncTime  = null;
 
 // DATA (loaded from Drive or seeded with defaults)
@@ -1084,99 +1081,81 @@ function onGoogleIdToken(credentialResponse) {
 }
 
 // ══════════════════════════════════════════════
-// DRIVE OPERATIONS — visible folder in My Drive
+// DRIVE OPERATIONS — appDataFolder (cross-browser permanent sync)
+// Key design: NEVER cache file ID across sessions.
+// Always search by filename in appDataFolder on every login.
+// appDataFolder is tied to (Google Account + App) — same on every browser/device.
 // ══════════════════════════════════════════════
-async function driveRequest(url, options = {}) {
-  // If token expired, re-request silently then retry once
-  const doFetch = (tok) => fetch(url, {
+
+async function driveApi(url, options = {}) {
+  const resp = await fetch(url, {
     ...options,
-    headers: { 'Authorization': `Bearer ${tok}`, ...options.headers },
+    headers: { 'Authorization': `Bearer ${accessToken}`, ...options.headers },
   });
-  let resp = await doFetch(accessToken);
-  if (resp.status === 401) {
-    // Token expired — get a new one silently (no consent prompt)
-    await new Promise((resolve, reject) => {
-      tokenClient.callback = async (r) => {
-        if (r.error) { reject(r.error); return; }
-        accessToken = r.access_token;
-        resolve();
-      };
-      tokenClient.requestAccessToken({ prompt: '' });
-    });
-    resp = await doFetch(accessToken);
+  if (!resp.ok) {
+    const err = await resp.text().catch(() => resp.status);
+    throw new Error(`Drive API ${resp.status}: ${err}`);
   }
   return resp;
 }
 
-// Find or create "HCM Pro KSA" folder in My Drive
-async function getOrCreateFolder() {
-  if (driveFolderId) return driveFolderId;
-
-  // Search for existing folder
-  const q = encodeURIComponent(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
-  const r = await driveRequest(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
-  const d = await r.json();
-
-  if (d.files && d.files.length > 0) {
-    driveFolderId = d.files[0].id;
-    return driveFolderId;
-  }
-
-  // Create new folder
-  const cr = await driveRequest('https://www.googleapis.com/drive/v3/files?fields=id', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: DRIVE_FOLDER_NAME, mimeType: 'application/vnd.google-apps.folder' }),
-  });
-  const cd = await cr.json();
-  driveFolderId = cd.id;
-  return driveFolderId;
-}
-
-// Find hcm_data.json inside the HCM folder (always fresh search — works cross-browser)
-async function findDriveFile() {
-  const folderId = await getOrCreateFolder();
-  const q = encodeURIComponent(`name='${DRIVE_FILE_NAME}' and '${folderId}' in parents and trashed=false`);
-  const r = await driveRequest(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime+desc`);
+// Search appDataFolder for our file — returns { id, modifiedTime } or null
+async function findFile() {
+  const q = encodeURIComponent(`name='${DRIVE_FILE_NAME}' and trashed=false`);
+  const r = await driveApi(
+    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id,modifiedTime)&orderBy=modifiedTime+desc&pageSize=1`
+  );
   const d = await r.json();
   return d.files?.[0] || null;
 }
 
-// Read file content
-async function readDriveFile(fileId) {
-  const r = await driveRequest(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
+// Read raw text content of a file
+async function readFile(fileId) {
+  const r = await driveApi(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
   return await r.text();
 }
 
-// Write (create or update) — always look up file ID fresh to avoid stale state
-async function writeDriveFile(jsonPayload) {
-  const folderId = await getOrCreateFolder();
-  const content  = serializeData(jsonPayload);
-  const blob     = new Blob([content], { type: 'application/json' });
-
-  // Always search fresh — this is what makes cross-browser work
-  const existing = await findDriveFile();
-
+// Create brand-new file in appDataFolder
+async function createFile(content) {
   const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify({
+    name: DRIVE_FILE_NAME,
+    parents: ['appDataFolder'],
+    mimeType: 'application/json',
+  })], { type: 'application/json' }));
+  form.append('file', new Blob([content], { type: 'application/json' }));
+  const r = await driveApi(
+    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+    { method: 'POST', body: form }
+  );
+  const d = await r.json();
+  return d.id;
+}
+
+// Update existing file content (by ID)
+async function updateFile(fileId, content) {
+  await driveApi(
+    `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
+    {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: content,
+    }
+  );
+}
+
+// ── THE CORE SAVE: always search fresh, create or update ──
+async function writeDriveFile(payload) {
+  const content = serializeData(payload);
+
+  // Always search — never trust cached ID across browsers
+  const existing = await findFile();
+
   if (existing) {
-    // Update existing file (no parent needed on update)
-    form.append('metadata', new Blob([JSON.stringify({ name: DRIVE_FILE_NAME })], { type: 'application/json' }));
-    form.append('file', blob);
-    await driveRequest(
-      `https://www.googleapis.com/upload/drive/v3/files/${existing.id}?uploadType=multipart`,
-      { method: 'PATCH', body: form }
-    );
+    await updateFile(existing.id, content);
     driveFileId = existing.id;
   } else {
-    // Create new file in HCM folder
-    form.append('metadata', new Blob([JSON.stringify({ name: DRIVE_FILE_NAME, parents: [folderId] })], { type: 'application/json' }));
-    form.append('file', blob);
-    const r = await driveRequest(
-      `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id`,
-      { method: 'POST', body: form }
-    );
-    const result = await r.json();
-    driveFileId = result.id;
+    driveFileId = await createFile(content);
   }
 
   syncCount++;
@@ -1184,18 +1163,17 @@ async function writeDriveFile(jsonPayload) {
   updateSyncUI();
 }
 
-// ── Load from Drive on login — ALWAYS fetch fresh, never use local cache ──
+// ── LOGIN: always load fresh from Drive — never use defaults if file exists ──
 async function loadOrInitDrive() {
   try {
-    showLoading(true, 'Looking for your data in Google Drive…', 'Searching "HCM Pro KSA" folder');
+    showLoading(true, 'Connecting to Google Drive…', 'Fetching your latest data');
 
-    // Always do a live search — this is the key fix for cross-browser
-    const file = await findDriveFile();
+    const file = await findFile();
 
     if (file) {
+      showLoading(true, 'Loading your data…', `Last saved: ${new Date(file.modifiedTime).toLocaleString()}`);
+      const text = await readFile(file.id);
       driveFileId = file.id;
-      showLoading(true, 'Loading your HCM data…', `Last saved: ${new Date(file.modifiedTime).toLocaleString()}`);
-      const text = await readDriveFile(file.id);
       const data = deserializeData(text);
 
       if (data && (data.employees || data.departments)) {
@@ -1217,7 +1195,7 @@ async function loadOrInitDrive() {
       departments = [...DEFAULT_DEPARTMENTS];
       subDepts    = [...DEFAULT_SUBDEPTS];
       await writeDriveFile({ employees, departments, subDepts, _meta: { savedAt: new Date().toISOString(), version: '2.0' } });
-      showToast('✅ Workspace created in "HCM Pro KSA" folder in your Drive');
+      showToast('✅ Workspace created — data saved to Google Drive');
     }
   } catch(e) {
     console.error('Drive load error:', e);
@@ -1244,7 +1222,7 @@ async function saveAllToDrive(showMsg = false) {
         version:   '2.0',
       }
     });
-    if (showMsg) showToast('☁️ Saved to Google Drive · "HCM Pro KSA" folder');
+    if (showMsg) showToast('☁️ Saved to Google Drive');
     updateDriveModal();
   } catch(e) {
     showToast('Drive save failed: ' + e.message, 'err');
@@ -1308,7 +1286,6 @@ function doLogout() {
   accessToken   = null;
   currentUser   = null;
   driveFileId   = null;
-  driveFolderId = null;
   syncCount     = 0;
   lastSyncTime  = null;
   employees     = [];

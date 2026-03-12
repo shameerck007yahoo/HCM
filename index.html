@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HCM Pro KSA</title>
+<!-- SheetJS for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:       #F0F4FF;
+  --bg2:      #E8EDFC;
+  --surface:  #FFFFFF;
+  --surface2: #F8FAFF;
+  --border:   #E2E8F8;
+  --border2:  #EEF2FF;
+  --navy:     #162054;
+  --navy2:    #1E2D6E;
+  --ind:      #3D5AF1;
+  --ind-lt:   rgba(61,90,241,0.09);
+  --ind-glow: rgba(61,90,241,0.20);
+  --teal:     #0D9488;   --teal-lt: rgba(13,148,136,0.09);
+  --violet:   #7C3AED;   --violet-lt: rgba(124,58,237,0.09);
+  --amber:    #D97706;   --amber-lt: rgba(217,119,6,0.09);
+  --rose:     #E11D48;   --rose-lt: rgba(225,29,72,0.09);
+  --emerald:  #059669;   --emerald-lt: rgba(5,150,105,0.09);
+  --cyan:     #0891B2;   --cyan-lt: rgba(8,145,178,0.09);
+  --orange:   #EA580C;   --orange-lt: rgba(234,88,12,0.09);
+  --t1: #0F172A; --t2: #334155; --t3: #64748B; --t4: #94A3B8; --t5: #CBD5E1;
+  --sh-xs: 0 1px 3px rgba(15,23,42,0.06);
+  --sh-sm: 0 2px 8px rgba(15,23,42,0.07), 0 1px 2px rgba(15,23,42,0.04);
+  --sh-md: 0 4px 20px rgba(15,23,42,0.09), 0 2px 6px rgba(15,23,42,0.05);
+  --sh-lg: 0 12px 48px rgba(15,23,42,0.12), 0 4px 12px rgba(15,23,42,0.06);
+  --r1: 10px; --r2: 14px; --r3: 18px;
+  --sb: 220px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t1); min-height: 100vh; display: flex; overflow-x: hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sb); min-height: 100vh; background: var(--navy);
+  position: fixed; left: 0; top: 0; bottom: 0;
+  display: flex; flex-direction: column; z-index: 100; overflow: hidden;
+}
+.sidebar::before {
+  content: ''; position: absolute; bottom: -60px; right: -60px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(61,90,241,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.sb-logo {
+  padding: 18px 16px 14px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
+}
+.sb-logo-mark {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--ind), #6C63FF);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0; box-shadow: 0 3px 12px rgba(61,90,241,0.38);
+}
+.sb-logo-text { font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; color: #fff; line-height: 1; letter-spacing: -0.02em; }
+.sb-logo-sub { font-size: 9px; font-weight: 500; color: rgba(255,255,255,0.28); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+.sb-nav { padding: 12px 10px; flex: 1; overflow-y: auto; }
+.sb-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.22); padding: 0 8px; margin: 12px 0 4px; }
+.sb-lbl:first-child { margin-top: 0; }
+.nav-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 8px; cursor: pointer;
+  font-size: 12.5px; font-weight: 500; color: rgba(255,255,255,0.45);
+  transition: all 0.15s; margin-bottom: 1px; user-select: none;
+}
+.nav-link:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.8); }
+.nav-link.active { background: linear-gradient(135deg,rgba(61,90,241,0.32),rgba(108,99,255,0.22)); color: #fff; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); }
+.nav-link-icon { font-size: 13px; width: 17px; text-align: center; flex-shrink: 0; }
+.nlbadge { margin-left: auto; font-size: 9px; font-weight: 700; background: var(--ind); color: #fff; padding: 1px 6px; border-radius: 20px; flex-shrink: 0; }
+.nlbadge.red { background: var(--rose); }
+.sb-bottom { padding: 10px 10px 14px; border-top: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
+.user-pill { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,0.06); cursor: pointer; transition: background 0.15s; }
+.user-pill:hover { background: rgba(255,255,255,0.1); }
+.user-av { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,var(--ind),#7C3AED); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0; }
+.user-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.82); line-height: 1.2; }
+.user-role { font-size: 9.5px; color: rgba(255,255,255,0.28); }
+
+/* ── MAIN ── */
+.main { margin-left: var(--sb); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border); height: 56px;
+  display: flex; align-items: center; gap: 12px; padding: 0 26px;
+  box-shadow: var(--sh-xs);
+}
+.breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12.5px; }
+.bc-item { color: var(--t3); cursor: pointer; transition: color 0.15s; }
+.bc-item:hover { color: var(--ind); }
+.bc-sep { color: var(--t5); }
+.bc-current { color: var(--t1); font-weight: 700; font-family: 'Bricolage Grotesque', sans-serif; }
+.topbar-right { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+.tb-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.15s; position: relative; color: var(--t3); }
+.tb-btn:hover { border-color: var(--ind); color: var(--ind); background: var(--ind-lt); }
+.tb-btn-dot::after { content: ''; position: absolute; top: 5px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--rose); border: 1.5px solid #fff; }
+
+/* ── PAGE ── */
+.page { padding: 24px 26px; flex: 1; }
+.view { display: none; }
+.view.active { display: block; animation: viewIn 0.22s ease; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── HOME HERO ── */
+.home-hero { margin-bottom: 22px; }
+.home-greeting { font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -0.03em; margin-bottom: 3px; }
+.home-greeting span { color: var(--ind); }
+.home-sub { font-size: 12.5px; color: var(--t3); }
+
+/* ── QUICK STATS ── */
+.quick-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 28px; }
+.qs { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); padding: 13px 14px; display: flex; align-items: center; gap: 10px; box-shadow: var(--sh-xs); transition: all 0.18s; }
+.qs:hover { transform: translateY(-2px); box-shadow: var(--sh-md); }
+.qs-ico { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.qs-val { font-family: 'Bricolage Grotesque', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.qs-lbl { font-size: 10.5px; color: var(--t3); font-weight: 500; margin-top: 2px; }
+
+/* ── SECTION HEADER ── */
+.sec-hd { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; }
+.sec-eyebrow { font-size: 9.5px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--ind); margin-bottom: 3px; display: flex; align-items: center; gap: 5px; }
+.sec-eyebrow::before { content: ''; width: 12px; height: 2px; background: var(--ind); border-radius: 2px; }
+.sec-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 16px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+
+/* MODULE CARDS */
+.module-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.module-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; box-shadow: var(--sh-sm); cursor: pointer; transition: all 0.24s cubic-bezier(0.34,1.2,0.64,1); display: flex; flex-direction: column; position: relative; }
+.module-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: var(--sh-lg); border-color: transparent; }
+.mc-stripe { height: 3px; flex-shrink: 0; }
+.mc-banner { padding: 16px 16px 12px; display: flex; flex-direction: column; align-items: flex-start; position: relative; overflow: hidden; }
+.mc-big-icon { font-size: 34px; position: absolute; right: 10px; top: 8px; opacity: 0.12; transform: rotate(-8deg); transition: all 0.26s; pointer-events: none; }
+.module-card:hover .mc-big-icon { opacity: 0.22; transform: rotate(-4deg) scale(1.08); }
+.mc-icon-wrap { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; flex-shrink: 0; }
+.mc-name { font-family: 'Bricolage Grotesque', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--t1); letter-spacing: -0.02em; line-height: 1.25; }
+.mc-desc { font-size: 11px; color: var(--t3); margin-top: 3px; line-height: 1.5; }
+.mc-chips { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 16px 12px; }
+.mc-chip { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 5px; background: var(--bg); border: 1px solid var(--border); color: var(--t3); transition: all 0.15s; white-space: nowrap; }
+.module-card:hover .mc-chip { border-color: rgba(61,90,241,0.2); color: var(--t2); }
+.mc-footer { padding: 10px 16px; border-top: 1px solid var(--border2); display: flex; align-items: center; justify-content: space-between; background: var(--surface2); margin-top: auto; }
+.mc-stats { display: flex; gap: 12px; }
+.mc-stat-val { font-family: 'Bricolage Grotesque', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.mc-stat-lbl { font-size: 9.5px; color: var(--t4); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+.mc-arrow { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--t4); transition: all 0.18s; flex-shrink: 0; }
+.module-card:hover .mc-arrow { border-color: var(--ind); color: var(--ind); background: var(--ind-lt); }
+
+/* SUBMODULE PAGE */
+.submod-hero { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; padding: 18px 20px; border-radius: var(--r2); border: 1px solid var(--border); background: var(--surface); box-shadow: var(--sh-sm); }
+.sh-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.sh-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+.sh-desc { font-size: 12.5px; color: var(--t3); margin-top: 2px; }
+.sh-badges { display: flex; gap: 7px; margin-top: 8px; flex-wrap: wrap; }
+.sh-badge { font-size: 10.5px; font-weight: 600; padding: 2px 9px; border-radius: 20px; background: var(--bg); border: 1px solid var(--border); color: var(--t2); }
+.submod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.smc { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; box-shadow: var(--sh-sm); cursor: pointer; transition: all 0.22s cubic-bezier(0.34,1.2,0.64,1); display: flex; flex-direction: column; }
+.smc:hover { transform: translateY(-4px); box-shadow: var(--sh-lg); border-color: transparent; }
+.smc-top { padding: 16px 18px 14px; display: flex; align-items: flex-start; gap: 11px; border-bottom: 1px solid var(--border2); }
+.smc-ico { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.smc-name { font-family: 'Bricolage Grotesque', sans-serif; font-size: 14px; font-weight: 800; color: var(--t1); letter-spacing: -0.02em; }
+.smc-desc { font-size: 11.5px; color: var(--t3); margin-top: 3px; line-height: 1.5; }
+.smc-body { padding: 14px 18px; flex: 1; }
+.smc-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.smc-kpi { padding: 9px 11px; border-radius: 8px; background: var(--bg); border: 1px solid var(--border2); }
+.smc-kpi-v { font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.smc-kpi-l { font-size: 9.5px; color: var(--t4); font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 2px; }
+.smc-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 10px; }
+.smc-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 5px; background: var(--bg); border: 1px solid var(--border); color: var(--t3); }
+.smc-ft { padding: 10px 18px; border-top: 1px solid var(--border2); display: flex; align-items: center; justify-content: space-between; background: var(--surface2); }
+.smc-ft-info { font-size: 11px; color: var(--t3); }
+.open-btn { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 4px 11px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--t2); cursor: pointer; transition: all 0.15s; }
+.open-btn:hover { border-color: var(--ind); color: var(--ind); background: var(--ind-lt); }
+
+/* DATA VIEW */
+.data-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; gap: 14px; flex-wrap: wrap; }
+.data-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+.data-desc { font-size: 12.5px; color: var(--t3); margin-top: 2px; }
+.data-acts { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 16px; }
+.kpi-c { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); padding: 12px 14px; display: flex; align-items: center; gap: 10px; box-shadow: var(--sh-xs); }
+.kpi-ico { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.kpi-val { font-family: 'Bricolage Grotesque', sans-serif; font-size: 19px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+.kpi-lbl { font-size: 10.5px; color: var(--t3); font-weight: 500; margin-top: 2px; }
+.toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.sw { position: relative; }
+.sw input { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--t1); font-family: 'DM Sans',sans-serif; font-size: 12.5px; padding: 7px 11px 7px 30px; outline: none; transition: all 0.18s; width: 220px; }
+.sw input:focus { border-color: var(--ind); box-shadow: 0 0 0 3px var(--ind-glow); }
+.sw input::placeholder { color: var(--t5); }
+.sw-ico { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--t4); }
+.fsel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--t2); font-family: 'DM Sans',sans-serif; font-size: 12px; padding: 7px 10px; outline: none; cursor: pointer; }
+.fsel:focus { border-color: var(--ind); }
+.fsel option { background: var(--surface); }
+.tbl-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; box-shadow: var(--sh-sm); }
+.tbl-hd { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.tbl-title { font-size: 13px; font-weight: 700; color: var(--t1); font-family: 'Bricolage Grotesque',sans-serif; }
+.tbl-ct { font-size: 11.5px; color: var(--t3); }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead th { padding: 9px 14px; text-align: left; font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t4); background: var(--surface2); border-bottom: 1px solid var(--border); white-space: nowrap; font-family: 'Bricolage Grotesque',sans-serif; }
+thead th:first-child { padding-left: 16px; }
+thead th:last-child { padding-right: 16px; }
+tbody tr { border-bottom: 1px solid var(--border2); transition: background 0.1s; cursor: pointer; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(61,90,241,0.025); }
+td { padding: 11px 14px; font-size: 12.5px; vertical-align: middle; }
+td:first-child { padding-left: 16px; }
+td:last-child { padding-right: 16px; }
+.ec { display: flex; align-items: center; gap: 9px; }
+.eav { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.12); }
+.ename { font-weight: 600; color: var(--t1); font-size: 12.5px; }
+.erole { font-size: 10.5px; color: var(--t3); margin-top: 1px; }
+.chip { font-family: 'JetBrains Mono',monospace; font-size: 10.5px; padding: 2px 7px; border-radius: 5px; display: inline-block; }
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.pdot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+.p-active { background: rgba(5,150,105,0.1); color: #047857; } .p-active .pdot { background: #059669; }
+.p-probation { background: var(--amber-lt); color: #B45309; } .p-probation .pdot { background: var(--amber); }
+.p-inactive { background: var(--rose-lt); color: #BE123C; } .p-inactive .pdot { background: var(--rose); }
+.p-saudi { background: var(--teal-lt); color: #0F766E; }
+.p-expat  { background: var(--ind-lt); color: #3730A3; }
+.warn-t { color: var(--rose); font-size: 11px; font-weight: 600; }
+.dim-t  { color: var(--t4); font-size: 11.5px; }
+.ra { display: flex; gap: 4px; opacity: 0; transition: opacity 0.1s; justify-content: flex-end; }
+tbody tr:hover .ra { opacity: 1; }
+.dept-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.dc { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; box-shadow: var(--sh-sm); cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.2,0.64,1); }
+.dc:hover { transform: translateY(-3px); box-shadow: var(--sh-lg); border-color: transparent; }
+.dc-stripe { height: 3px; }
+.dc-body { padding: 12px 14px; }
+.dc-top { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+.dc-ico { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.dc-name { font-family: 'Bricolage Grotesque',sans-serif; font-size: 13px; font-weight: 800; color: var(--t1); }
+.dc-code { font-size: 9.5px; color: var(--t4); font-family: 'JetBrains Mono',monospace; margin-top: 1px; }
+.dc-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 9px; }
+.dc-stat { text-align: center; padding: 6px 4px; background: var(--bg); border-radius: 6px; }
+.dc-sv { font-family: 'Bricolage Grotesque',sans-serif; font-size: 15px; font-weight: 800; }
+.dc-sl { font-size: 9px; color: var(--t4); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+.dc-bar-wrap { height: 4px; background: var(--bg2); border-radius: 2px; overflow: hidden; margin-bottom: 8px; }
+.dc-bar { height: 100%; border-radius: 2px; }
+.dc-subs { display: flex; gap: 4px; flex-wrap: wrap; }
+.dc-sub-tag { font-size: 9.5px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--bg); border: 1px solid var(--border); color: var(--t3); }
+.dc-ft { padding: 8px 14px; border-top: 1px solid var(--border2); display: flex; align-items: center; justify-content: space-between; background: var(--surface2); }
+.dc-mgr { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--t2); }
+.dc-mav { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 7px; font-weight: 800; color: #fff; }
+.pagination { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--t3); }
+.pg-btns { display: flex; gap: 3px; }
+.pgbtn { min-width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--t2); cursor: pointer; font-size: 11.5px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; font-family: 'DM Sans',sans-serif; padding: 0 7px; }
+.pgbtn:hover { border-color: var(--ind); color: var(--ind); background: var(--ind-lt); }
+.pgbtn.active { background: var(--ind); color: #fff; border-color: var(--ind); }
+.btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-family: 'DM Sans',sans-serif; font-size: 12.5px; font-weight: 600; transition: all 0.16s; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.btn-primary { background: linear-gradient(135deg,var(--ind),#6257F4); color: #fff; box-shadow: 0 2px 10px var(--ind-glow); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px var(--ind-glow); filter: brightness(1.05); }
+.btn-secondary { background: var(--surface2); border: 1px solid var(--border); color: var(--t2); }
+.btn-secondary:hover { border-color: var(--ind); color: var(--ind); background: var(--ind-lt); }
+.btn-danger { background: var(--rose-lt); color: var(--rose); border: 1px solid rgba(225,29,72,0.2); }
+.btn-danger:hover { background: rgba(225,29,72,0.18); }
+.btn-sm { padding: 6px 13px; font-size: 12px; border-radius: 7px; }
+.btn-xs { padding: 3px 8px; font-size: 10.5px; border-radius: 5px; }
+.modal-bd { position: fixed; inset: 0; z-index: 200; background: rgba(15,23,42,0.42); backdrop-filter: blur(10px); display: none; align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; }
+.modal-bd.open { display: flex; animation: bdIn 0.18s ease; }
+@keyframes bdIn { from { opacity: 0; } to { opacity: 1; } }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; width: 100%; max-width: 840px; box-shadow: var(--sh-lg); animation: mUp 0.26s cubic-bezier(0.34,1.28,0.64,1); margin: auto; }
+@keyframes mUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.m-hd { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.m-hd-l { display: flex; align-items: center; gap: 10px; }
+.m-hd-ico { width: 36px; height: 36px; border-radius: 9px; background: var(--ind-lt); border: 1px solid rgba(61,90,241,0.15); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.m-hd-title { font-family: 'Bricolage Grotesque',sans-serif; font-size: 14px; font-weight: 800; color: var(--t1); }
+.m-hd-sub { font-size: 11px; color: var(--t3); margin-top: 1px; }
+.m-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; background: var(--ind-lt); color: var(--ind); }
+.m-close { width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface2); color: var(--t3); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+.m-close:hover { border-color: var(--rose); color: var(--rose); background: var(--rose-lt); }
+.m-tabs { display: flex; padding: 0 20px; border-bottom: 1px solid var(--border); overflow-x: auto; background: var(--surface2); }
+.mtab { padding: 10px 14px; border: none; background: none; cursor: pointer; font-family: 'DM Sans',sans-serif; font-size: 12px; font-weight: 600; color: var(--t3); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.14s; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+.mtab:hover { color: var(--t2); }
+.mtab.active { color: var(--ind); border-bottom-color: var(--ind); }
+.m-body { padding: 20px; max-height: 58vh; overflow-y: auto; }
+.tp { display: none; }
+.tp.active { display: block; animation: fadeIn 0.16s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.m-ft { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--border); background: var(--surface2); border-radius: 0 0 18px 18px; }
+.m-ft-hint { font-size: 11px; color: var(--t3); margin-right: auto; }
+.slbl { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ind); margin: 18px 0 10px; padding-bottom: 7px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+.slbl:first-child { margin-top: 0; }
+.fg { display: grid; gap: 10px; }
+.fg-2 { grid-template-columns: 1fr 1fr; }
+.fg-3 { grid-template-columns: 1fr 1fr 1fr; }
+.fg-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.ff { display: flex; flex-direction: column; gap: 4px; }
+.ff-full { grid-column: 1/-1; }
+.flbl { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--t3); display: flex; align-items: center; gap: 4px; }
+.req { color: var(--rose); font-size: 11px; }
+.finput,.fselect,.ftextarea { background: var(--bg); border: 1px solid var(--border); border-radius: 7px; color: var(--t1); font-family: 'DM Sans',sans-serif; font-size: 12.5px; padding: 7px 10px; outline: none; transition: all 0.16s; width: 100%; }
+.finput:focus,.fselect:focus,.ftextarea:focus { border-color: var(--ind); box-shadow: 0 0 0 3px var(--ind-glow); background: var(--surface); }
+.finput::placeholder,.ftextarea::placeholder { color: var(--t5); }
+.fselect option { background: var(--surface); }
+.ftextarea { resize: vertical; min-height: 72px; }
+.fhint { font-size: 10px; color: var(--t4); }
+.mono { font-family: 'JetBrains Mono',monospace; font-size: 12px; }
+.toast { position: fixed; bottom: 20px; right: 20px; z-index: 999; background: var(--navy); border: 1px solid rgba(255,255,255,0.1); border-radius: 11px; padding: 11px 16px; display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: rgba(255,255,255,0.9); box-shadow: var(--sh-lg); transform: translateY(60px); opacity: 0; transition: all 0.28s cubic-bezier(0.34,1.4,0.64,1); }
+.toast.show { transform: translateY(0); opacity: 1; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ══ PAYROLL RUN VIEW ══ */
+.pr-steps{display:flex;align-items:center;gap:0;margin-bottom:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px 20px;box-shadow:var(--sh-xs);}
+.pr-step{display:flex;align-items:center;gap:8px;flex:1;position:relative;}
+.pr-step:not(:last-child)::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:calc(100% - 120px);height:1px;background:var(--border);left:120px;}
+.pr-step-num{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--t4);flex-shrink:0;transition:all .2s;z-index:1;}
+.pr-step.active .pr-step-num{border-color:var(--ind);background:var(--ind);color:#fff;box-shadow:0 0 0 4px var(--ind-glow);}
+.pr-step.done .pr-step-num{border-color:var(--emerald);background:var(--emerald);color:#fff;}
+.pr-step-lbl{font-size:11.5px;font-weight:600;color:var(--t4);line-height:1.2;}
+.pr-step.active .pr-step-lbl{color:var(--t1);}
+.pr-step.done .pr-step-lbl{color:var(--emerald);}
+.pr-step-sub{font-size:9.5px;color:var(--t5);margin-top:1px;}
+.pr-step.active .pr-step-sub{color:var(--t3);}
+
+.pr-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--sh-sm);overflow:hidden;}
+.pr-panel-hd{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:space-between;}
+.pr-panel-title{font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:800;color:var(--t1);}
+.pr-panel-body{padding:18px;}
+
+.period-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.pc{border:2px solid var(--border);border-radius:var(--r1);padding:12px 14px;cursor:pointer;transition:all .18s;background:var(--surface);}
+.pc:hover{border-color:var(--ind);background:var(--ind-lt);}
+.pc.selected{border-color:var(--ind);background:var(--ind-lt);box-shadow:0 0 0 3px var(--ind-glow);}
+.pc-month{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:800;color:var(--t1);}
+.pc-year{font-size:10px;color:var(--t3);margin-top:1px;}
+.pc-status{font-size:9.5px;font-weight:700;margin-top:6px;padding:2px 6px;border-radius:4px;display:inline-block;}
+.pc-status.open{background:var(--emerald-lt);color:var(--emerald);}
+.pc-status.prev{background:var(--bg);color:var(--t4);border:1px solid var(--border);}
+
+.pr-inc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pr-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);}
+.pr-toggle-l{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--t1);}
+.toggle-sw{width:36px;height:20px;border-radius:10px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle-sw.on{background:var(--ind);}
+.toggle-sw::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle-sw.on::after{transform:translateX(16px);}
+
+.pr-emp-table td{font-size:12px;}
+.sal-cell{font-family:'JetBrains Mono',monospace;font-size:11.5px;}
+.pr-total-row td{background:var(--bg);font-weight:700;border-top:2px solid var(--border)!important;}
+
+/* Run animation */
+.run-progress{padding:32px 20px;text-align:center;}
+.run-spinner{width:64px;height:64px;border-radius:50%;border:4px solid var(--ind-lt);border-top-color:var(--ind);animation:spin .9s linear infinite;margin:0 auto 20px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.run-step-list{max-width:340px;margin:20px auto 0;text-align:left;}
+.rsl-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border2);font-size:12.5px;}
+.rsl-ico{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.rsl-ico.pending{background:var(--bg2);color:var(--t4);}
+.rsl-ico.running{background:var(--ind-lt);animation:pulse 1s ease-in-out infinite;}
+.rsl-ico.done{background:var(--emerald-lt);color:var(--emerald);}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+/* Results */
+.pr-result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.prc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;box-shadow:var(--sh-xs);display:flex;align-items:center;gap:10px;}
+.prc-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.prc-val{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;line-height:1;}
+.prc-lbl{font-size:10px;color:var(--t3);font-weight:500;margin-top:2px;}
+</style>
+
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-mark">🏢</div>
+    <div><div class="sb-logo-text">HCM Pro</div><div class="sb-logo-sub">KSA · Payroll Suite</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-lbl">Overview</div>
+    <div class="nav-link active" onclick="nav('home')"><span class="nav-link-icon">🏠</span>Dashboard</div>
+    <div class="nav-link" onclick="nav('home')"><span class="nav-link-icon">📊</span>Analytics</div>
+    <div class="sb-lbl">Modules</div>
+    <div class="nav-link" id="snav-coredata" onclick="nav('coredata')"><span class="nav-link-icon">🗂</span>Core Data<span class="nlbadge">3</span></div>
+    <div class="nav-link" id="snav-payroll" onclick="nav('payroll')"><span class="nav-link-icon">💰</span>Payroll</div>
+    <div class="nav-link" id="snav-attendance" onclick="nav('attendance')"><span class="nav-link-icon">🕐</span>Attendance</div>
+    <div class="nav-link" id="snav-performance" onclick="nav('performance')"><span class="nav-link-icon">🎯</span>Performance</div>
+    <div class="nav-link" id="snav-setup" onclick="nav('setup')"><span class="nav-link-icon">⚙️</span>Setup</div>
+    <div class="sb-lbl">Compliance</div>
+    <div class="nav-link"><span class="nav-link-icon">🆔</span>Iqama Tracker<span class="nlbadge red">8</span></div>
+    <div class="nav-link"><span class="nav-link-icon">🇸🇦</span>Nitaqat</div>
+    <div class="nav-link"><span class="nav-link-icon">🏥</span>GOSI</div>
+  </nav>
+  <div class="sb-bottom">
+    <div class="user-pill">
+      <div class="user-av">HA</div>
+      <div><div class="user-name">HR Admin</div><div class="user-role">Super Administrator</div></div>
+      <span style="margin-left:auto;color:rgba(255,255,255,0.22);font-size:13px">⋯</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <header class="topbar">
+    <div class="breadcrumb" id="breadcrumb">
+      <span class="bc-current">Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <button class="tb-btn tb-btn-dot">🔔</button>
+      <button class="tb-btn">❓</button>
+      <button class="btn btn-secondary btn-sm" id="topExportBtn" onclick="handleExport()">⬇ Export</button>
+      <button class="btn btn-primary btn-sm" id="mainAddBtn" style="display:none">＋ Add</button>
+    </div>
+  </header>
+
+  <div class="page">
+
+    <!-- HOME -->
+    <div class="view active" id="view-home">
+      <div class="home-hero">
+        <div class="home-greeting">Good morning, <span>HR Admin</span> 👋</div>
+        <div class="home-sub">HCM overview — Monday, 23 Feb 2026</div>
+      </div>
+      <div class="quick-stats">
+        <div class="qs"><div class="qs-ico" style="background:var(--ind-lt)">👥</div><div><div class="qs-val" style="color:var(--ind)">247</div><div class="qs-lbl">Total Employees</div></div></div>
+        <div class="qs"><div class="qs-ico" style="background:var(--teal-lt)">🇸🇦</div><div><div class="qs-val" style="color:var(--teal)">181</div><div class="qs-lbl">Saudi Nationals</div></div></div>
+        <div class="qs"><div class="qs-ico" style="background:var(--amber-lt)">⚠️</div><div><div class="qs-val" style="color:var(--amber)">8</div><div class="qs-lbl">Iqama Renewals</div></div></div>
+        <div class="qs"><div class="qs-ico" style="background:var(--emerald-lt)">✅</div><div><div class="qs-val" style="color:var(--emerald)">239</div><div class="qs-lbl">GOSI Enrolled</div></div></div>
+        <div class="qs"><div class="qs-ico" style="background:var(--violet-lt)">🎯</div><div><div class="qs-val" style="color:var(--violet)">86%</div><div class="qs-lbl">Avg Performance</div></div></div>
+      </div>
+      <div class="sec-hd"><div><div class="sec-eyebrow">System Modules</div><div class="sec-title">Select a Module</div></div></div>
+      <div class="module-grid">
+        <div class="module-card" onclick="nav('coredata')">
+          <div class="mc-stripe" style="background:linear-gradient(90deg,#3D5AF1,#7C3AED)"></div>
+          <div class="mc-banner"><div class="mc-big-icon">🗂</div><div class="mc-icon-wrap" style="background:var(--ind-lt)">🗂</div><div class="mc-name">Core Data</div><div class="mc-desc">Employees, departments & org structure</div></div>
+          <div class="mc-chips"><span class="mc-chip">👤 Employees</span><span class="mc-chip">🏢 Departments</span><span class="mc-chip">📂 Sub-Depts</span></div>
+          <div class="mc-footer"><div class="mc-stats"><div><div class="mc-stat-val" style="color:var(--ind)">247</div><div class="mc-stat-lbl">Staff</div></div><div><div class="mc-stat-val" style="color:var(--teal)">7</div><div class="mc-stat-lbl">Depts</div></div></div><div class="mc-arrow">→</div></div>
+        </div>
+        <div class="module-card" onclick="nav('payroll')">
+          <div class="mc-stripe" style="background:linear-gradient(90deg,#0891B2,#0D9488)"></div>
+          <div class="mc-banner"><div class="mc-big-icon">💰</div><div class="mc-icon-wrap" style="background:var(--cyan-lt)">💰</div><div class="mc-name">Payroll</div><div class="mc-desc">Salary, GOSI & WPS compliance</div></div>
+          <div class="mc-chips"><span class="mc-chip">💳 Salary</span><span class="mc-chip">🏥 GOSI</span><span class="mc-chip">🏦 WPS</span></div>
+          <div class="mc-footer"><div class="mc-stats"><div><div class="mc-stat-val" style="color:var(--cyan)">2.1M</div><div class="mc-stat-lbl">SAR/mo</div></div><div><div class="mc-stat-val" style="color:var(--emerald)">239</div><div class="mc-stat-lbl">Processed</div></div></div><div class="mc-arrow">→</div></div>
+        </div>
+        <div class="module-card" onclick="nav('attendance')">
+          <div class="mc-stripe" style="background:linear-gradient(90deg,#7C3AED,#6257F4)"></div>
+          <div class="mc-banner"><div class="mc-big-icon">🕐</div><div class="mc-icon-wrap" style="background:var(--violet-lt)">🕐</div><div class="mc-name">Attendance</div><div class="mc-desc">Daily logs, shifts & overtime</div></div>
+          <div class="mc-chips"><span class="mc-chip">📅 Daily Logs</span><span class="mc-chip">🔄 Shifts</span><span class="mc-chip">⏱ Overtime</span></div>
+          <div class="mc-footer"><div class="mc-stats"><div><div class="mc-stat-val" style="color:var(--violet)">96%</div><div class="mc-stat-lbl">Today</div></div><div><div class="mc-stat-val" style="color:var(--amber)">14</div><div class="mc-stat-lbl">Absent</div></div></div><div class="mc-arrow">→</div></div>
+        </div>
+        <div class="module-card" onclick="nav('performance')">
+          <div class="mc-stripe" style="background:linear-gradient(90deg,#D97706,#EA580C)"></div>
+          <div class="mc-banner"><div class="mc-big-icon">🎯</div><div class="mc-icon-wrap" style="background:var(--amber-lt)">🎯</div><div class="mc-name">Performance</div><div class="mc-desc">Goals, reviews & KPI tracking</div></div>
+          <div class="mc-chips"><span class="mc-chip">🏆 Goals</span><span class="mc-chip">📝 Reviews</span><span class="mc-chip">📈 KPIs</span></div>
+          <div class="mc-footer"><div class="mc-stats"><div><div class="mc-stat-val" style="color:var(--amber)">86%</div><div class="mc-stat-lbl">Avg Score</div></div><div><div class="mc-stat-val" style="color:var(--orange)">34</div><div class="mc-stat-lbl">Pending</div></div></div><div class="mc-arrow">→</div></div>
+        </div>
+        <div class="module-card" onclick="nav('setup')">
+          <div class="mc-stripe" style="background:linear-gradient(90deg,#475569,#334155)"></div>
+          <div class="mc-banner"><div class="mc-big-icon">⚙️</div><div class="mc-icon-wrap" style="background:rgba(71,85,105,0.1)">⚙️</div><div class="mc-name">Setup</div><div class="mc-desc">System config, roles & workflows</div></div>
+          <div class="mc-chips"><span class="mc-chip">🔐 Roles</span><span class="mc-chip">🏗 Structure</span><span class="mc-chip">🔔 Workflows</span></div>
+          <div class="mc-footer"><div class="mc-stats"><div><div class="mc-stat-val" style="color:#475569">12</div><div class="mc-stat-lbl">Roles</div></div><div><div class="mc-stat-val" style="color:#64748B">8</div><div class="mc-stat-lbl">Workflows</div></div></div><div class="mc-arrow">→</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CORE DATA -->
+    <div class="view" id="view-coredata">
+      <div class="submod-hero">
+        <div class="sh-icon" style="background:var(--ind-lt);border:1px solid rgba(61,90,241,0.15)">🗂</div>
+        <div style="flex:1"><div class="sh-title">Core Data</div><div class="sh-desc">Central organizational and employee master data</div>
+          <div class="sh-badges"><span class="sh-badge" style="background:var(--ind-lt);border-color:rgba(61,90,241,0.2);color:var(--ind)">247 Employees</span><span class="sh-badge" style="background:var(--teal-lt);border-color:rgba(13,148,136,0.2);color:var(--teal)">7 Departments</span><span class="sh-badge" style="background:var(--violet-lt);border-color:rgba(124,58,237,0.2);color:var(--violet)">18 Sub-Departments</span></div>
+        </div>
+      </div>
+      <div class="submod-grid">
+        <div class="smc" onclick="nav('employees')">
+          <div class="smc-top"><div class="smc-ico" style="background:var(--ind-lt)">👤</div><div><div class="smc-name">Employee Data</div><div class="smc-desc">Full profiles, compliance, employment details and salary structure.</div></div></div>
+          <div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">247</div><div class="smc-kpi-l">Total</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">181</div><div class="smc-kpi-l">Saudi</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">221</div><div class="smc-kpi-l">Active</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">14</div><div class="smc-kpi-l">Probation</div></div></div><div class="smc-tags"><span class="smc-tag">Personal Info</span><span class="smc-tag">Iqama/NID</span><span class="smc-tag">GOSI</span><span class="smc-tag">Salary</span></div></div>
+          <div class="smc-ft"><div class="smc-ft-info">Updated today 09:14</div><button class="open-btn">Open →</button></div>
+        </div>
+        <div class="smc" onclick="nav('departments')">
+          <div class="smc-top"><div class="smc-ico" style="background:var(--teal-lt)">🏢</div><div><div class="smc-name">Departments</div><div class="smc-desc">Org structure, department heads, budgets and Nitaqat classification.</div></div></div>
+          <div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">7</div><div class="smc-kpi-l">Total</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">7</div><div class="smc-kpi-l">Active</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">62</div><div class="smc-kpi-l">Largest</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">79%</div><div class="smc-kpi-l">HC Fill</div></div></div><div class="smc-tags"><span class="smc-tag">Technology</span><span class="smc-tag">Finance</span><span class="smc-tag">Operations</span><span class="smc-tag">+4</span></div></div>
+          <div class="smc-ft"><div class="smc-ft-info">255 budgeted headcount</div><button class="open-btn">Open →</button></div>
+        </div>
+        <div class="smc" onclick="nav('subdepartments')">
+          <div class="smc-top"><div class="smc-ico" style="background:var(--violet-lt)">📂</div><div><div class="smc-name">Sub-Departments</div><div class="smc-desc">Teams and functional divisions, leads, cost centers and reporting lines.</div></div></div>
+          <div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">18</div><div class="smc-kpi-l">Teams</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">24</div><div class="smc-kpi-l">Largest</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">10</div><div class="smc-kpi-l">Avg Size</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">7</div><div class="smc-kpi-l">Depts</div></div></div><div class="smc-tags"><span class="smc-tag">Software Dev</span><span class="smc-tag">Procurement</span><span class="smc-tag">+16</span></div></div>
+          <div class="smc-ft"><div class="smc-ft-info">Avg 10 members/team</div><button class="open-btn">Open →</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYROLL -->
+    <div class="view" id="view-payroll">
+      <div class="submod-hero">
+        <div class="sh-icon" style="background:var(--cyan-lt);border:1px solid rgba(8,145,178,0.15)">💰</div>
+        <div style="flex:1"><div class="sh-title">Payroll</div><div class="sh-desc">Saudi WPS-compliant payroll processing and GOSI management</div>
+          <div class="sh-badges"><span class="sh-badge" style="background:var(--cyan-lt);border-color:rgba(8,145,178,0.2);color:var(--cyan)">SAR 2.1M/mo</span><span class="sh-badge" style="background:var(--emerald-lt);border-color:rgba(5,150,105,0.2);color:var(--emerald)">239 Processed</span></div>
+        </div>
+      </div>
+      <div class="submod-grid">
+        <div class="smc" onclick="nav('payrollrun')"><div class="smc-top"><div class="smc-ico" style="background:var(--cyan-lt)">💳</div><div><div class="smc-name">Salary Processing</div><div class="smc-desc">Run monthly payroll, manage basic salaries, allowances and deductions.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--cyan)">239</div><div class="smc-kpi-l">Staff</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">Feb 26</div><div class="smc-kpi-l">Run</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">2.1M</div><div class="smc-kpi-l">SAR Total</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">5</div><div class="smc-kpi-l">Pending</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Last run: 1 Feb 2026</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('GOSI — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--teal-lt)">🏥</div><div><div class="smc-name">GOSI Contributions</div><div class="smc-desc">Monthly GOSI filings, Saudi (22%) and Expat (2%) contributions.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">239</div><div class="smc-kpi-l">Enrolled</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">8</div><div class="smc-kpi-l">Pending</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">181</div><div class="smc-kpi-l">Saudi</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">58</div><div class="smc-kpi-l">Expat</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Filing due: 28 Feb</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('WPS — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--emerald-lt)">🏦</div><div><div class="smc-name">WPS & Bank Transfers</div><div class="smc-desc">Wage Protection System, bank transfers and IBAN management.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">231</div><div class="smc-kpi-l">Registered</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">8</div><div class="smc-kpi-l">Pending</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">5th</div><div class="smc-kpi-l">Deadline</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">4</div><div class="smc-kpi-l">Banks</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">WPS deadline: 5th monthly</div><button class="open-btn">Open →</button></div></div>
+      </div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="view" id="view-attendance">
+      <div class="submod-hero">
+        <div class="sh-icon" style="background:var(--violet-lt);border:1px solid rgba(124,58,237,0.15)">🕐</div>
+        <div style="flex:1"><div class="sh-title">Attendance</div><div class="sh-desc">Real-time tracking, shift management and overtime monitoring</div>
+          <div class="sh-badges"><span class="sh-badge" style="background:var(--violet-lt);border-color:rgba(124,58,237,0.2);color:var(--violet)">96% Today</span><span class="sh-badge" style="background:var(--amber-lt);border-color:rgba(217,119,6,0.2);color:var(--amber)">14 Absent</span></div>
+        </div>
+      </div>
+      <div class="submod-grid">
+        <div class="smc" onclick="showToast('Daily Logs — coming soon','info')"><div class="smc-top"><div class="smc-ico style="background:var(--violet-lt)">📅</div><div><div class="smc-name">Daily Attendance</div><div class="smc-desc">Real-time check-in/out records, late arrivals and absence tracking.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">233</div><div class="smc-kpi-l">Present</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">14</div><div class="smc-kpi-l">Absent</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">7</div><div class="smc-kpi-l">Late</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">96%</div><div class="smc-kpi-l">Rate</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Updated: Live</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Shift Schedules — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--cyan-lt)">🔄</div><div><div class="smc-name">Shift Schedules</div><div class="smc-desc">Define and assign rotating, fixed and flexible shift patterns.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--cyan)">4</div><div class="smc-kpi-l">Shift Types</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">247</div><div class="smc-kpi-l">Assigned</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">3</div><div class="smc-kpi-l">Locations</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">5</div><div class="smc-kpi-l">Unassigned</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Next schedule: Mar 2026</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Overtime — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--amber-lt)">⏱</div><div><div class="smc-name">Overtime</div><div class="smc-desc">Track and approve OT hours, calculate pay per Saudi Labor Law Art. 107.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">312h</div><div class="smc-kpi-l">This Month</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--orange)">28</div><div class="smc-kpi-l">Employees</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">12</div><div class="smc-kpi-l">Pending</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">18</div><div class="smc-kpi-l">Approved</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Approval pending: 12</div><button class="open-btn">Open →</button></div></div>
+      </div>
+    </div>
+
+    <!-- PERFORMANCE -->
+    <div class="view" id="view-performance">
+      <div class="submod-hero">
+        <div class="sh-icon" style="background:var(--amber-lt);border:1px solid rgba(217,119,6,0.15)">🎯</div>
+        <div style="flex:1"><div class="sh-title">Performance Management</div><div class="sh-desc">Goals, appraisals, KPIs and employee development tracking</div>
+          <div class="sh-badges"><span class="sh-badge" style="background:var(--amber-lt);border-color:rgba(217,119,6,0.2);color:var(--amber)">86% Avg Score</span><span class="sh-badge" style="background:var(--rose-lt);border-color:rgba(225,29,72,0.2);color:var(--rose)">34 Pending Reviews</span></div>
+        </div>
+      </div>
+      <div class="submod-grid">
+        <div class="smc" onclick="showToast('Goals & OKRs — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--amber-lt)">🏆</div><div><div class="smc-name">Goals & OKRs</div><div class="smc-desc">Set and track company, department and individual goals and key results.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">142</div><div class="smc-kpi-l">Active Goals</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">68%</div><div class="smc-kpi-l">On Track</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">18</div><div class="smc-kpi-l">At Risk</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">Q1</div><div class="smc-kpi-l">Current</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Q1 2026 cycle</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Appraisals — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--orange-lt)">📝</div><div><div class="smc-name">Appraisals & Reviews</div><div class="smc-desc">Annual and mid-year performance reviews, 360° feedback management.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--orange)">86%</div><div class="smc-kpi-l">Avg Score</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">34</div><div class="smc-kpi-l">Pending</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">213</div><div class="smc-kpi-l">Completed</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">Annual</div><div class="smc-kpi-l">Cycle</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Due: 15 Mar 2026</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('KPI Dashboard — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--violet-lt)">📈</div><div><div class="smc-name">KPI Dashboard</div><div class="smc-desc">Real-time KPI metrics, department performance and trend analytics.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">47</div><div class="smc-kpi-l">KPIs Tracked</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">38</div><div class="smc-kpi-l">On Target</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">6</div><div class="smc-kpi-l">Warning</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--rose)">3</div><div class="smc-kpi-l">Critical</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">7 departments monitored</div><button class="open-btn">Open →</button></div></div>
+      </div>
+    </div>
+
+    <!-- SETUP -->
+    <div class="view" id="view-setup">
+      <div class="submod-hero">
+        <div class="sh-icon" style="background:rgba(71,85,105,0.1);border:1px solid rgba(71,85,105,0.15)">⚙️</div>
+        <div style="flex:1"><div class="sh-title">Setup & Configuration</div><div class="sh-desc">System configuration, user roles, permissions and workflow management</div>
+          <div class="sh-badges"><span class="sh-badge">12 Roles</span><span class="sh-badge">8 Workflows</span><span class="sh-badge">24 Users</span></div>
+        </div>
+      </div>
+      <div class="submod-grid">
+        <div class="smc" onclick="showToast('Roles & Permissions — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:rgba(71,85,105,0.1)">🔐</div><div><div class="smc-name">Roles & Permissions</div><div class="smc-desc">Define user roles, access levels and permission sets across all modules.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:#475569">12</div><div class="smc-kpi-l">Roles</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:#64748B">24</div><div class="smc-kpi-l">Users</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">18</div><div class="smc-kpi-l">Active</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">3</div><div class="smc-kpi-l">Pending</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Last modified: 3 days ago</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Company Structure — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--ind-lt)">🏗</div><div><div class="smc-name">Company Structure</div><div class="smc-desc">Configure legal entities, branches, locations and business units.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--ind)">1</div><div class="smc-kpi-l">Entity</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">3</div><div class="smc-kpi-l">Branches</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">7</div><div class="smc-kpi-l">Depts</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">3</div><div class="smc-kpi-l">Cities</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">KSA entity registered</div><button class="open-btn">Open →</button></div></div>
+        <div class="smc" onclick="showToast('Workflows — coming soon','info')"><div class="smc-top"><div class="smc-ico" style="background:var(--emerald-lt)">🔔</div><div><div class="smc-name">Workflows & Approvals</div><div class="smc-desc">Configure automated workflows, approval chains and notification rules.</div></div></div><div class="smc-body"><div class="smc-kpis"><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--emerald)">8</div><div class="smc-kpi-l">Workflows</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--teal)">6</div><div class="smc-kpi-l">Active</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--amber)">24</div><div class="smc-kpi-l">Rules</div></div><div class="smc-kpi"><div class="smc-kpi-v" style="color:var(--violet)">3</div><div class="smc-kpi-l">Drafts</div></div></div></div><div class="smc-ft"><div class="smc-ft-info">Leave & payroll automations</div><button class="open-btn">Open →</button></div></div>
+      </div>
+    </div>
+
+
+    <!-- ═══ PAYROLL RUN ═══ -->
+    <div class="view" id="view-payrollrun">
+      <div class="data-header">
+        <div><div class="data-title">Salary Processing</div><div class="data-desc">Generate and review monthly payroll session</div></div>
+        <div class="data-acts" id="pr-acts">
+          <button class="btn btn-secondary btn-sm" onclick="nav('payroll')">← Back to Payroll</button>
+        </div>
+      </div>
+
+      <!-- STEP INDICATOR -->
+      <div class="pr-steps" id="pr-steps-bar">
+        <div class="pr-step active" id="prstep-1">
+          <div class="pr-step-num">1</div>
+          <div><div class="pr-step-lbl">Configure Run</div><div class="pr-step-sub">Period & options</div></div>
+        </div>
+        <div class="pr-step" id="prstep-2">
+          <div class="pr-step-num">2</div>
+          <div><div class="pr-step-lbl">Review Payslips</div><div class="pr-step-sub">Verify all entries</div></div>
+        </div>
+        <div class="pr-step" id="prstep-3">
+          <div class="pr-step-num">3</div>
+          <div><div class="pr-step-lbl">Generate Payroll</div><div class="pr-step-sub">Process & finalize</div></div>
+        </div>
+        <div class="pr-step" id="prstep-4">
+          <div class="pr-step-num">4</div>
+          <div><div class="pr-step-lbl">Results</div><div class="pr-step-sub">Summary & export</div></div>
+        </div>
+      </div>
+
+      <!-- STEP 1: CONFIGURE -->
+      <div id="pr-s1">
+        <div class="pr-panel" style="margin-bottom:14px">
+          <div class="pr-panel-hd"><div class="pr-panel-title">📅 Select Pay Period</div><span class="dim-t">February 2026 is the current open period</span></div>
+          <div class="pr-panel-body">
+            <div class="period-cards">
+              <div class="pc selected" onclick="selectPeriod(this,'Feb 2026')">
+                <div class="pc-month">February</div><div class="pc-year">2026</div>
+                <div class="pc-status open">● Open</div>
+              </div>
+              <div class="pc" onclick="selectPeriod(this,'Jan 2026')">
+                <div class="pc-month">January</div><div class="pc-year">2026</div>
+                <div class="pc-status prev">Processed</div>
+              </div>
+              <div class="pc" onclick="selectPeriod(this,'Dec 2025')">
+                <div class="pc-month">December</div><div class="pc-year">2025</div>
+                <div class="pc-status prev">Processed</div>
+              </div>
+              <div class="pc" onclick="selectPeriod(this,'Nov 2025')">
+                <div class="pc-month">November</div><div class="pc-year">2025</div>
+                <div class="pc-status prev">Processed</div>
+              </div>
+            </div>
+            <div class="fg fg-3">
+              <div class="ff"><label class="flbl">Payroll Type</label>
+                <select class="fselect"><option selected>Monthly Regular</option><option>Supplemental</option><option>Bonus Run</option><option>Off-Cycle</option></select>
+              </div>
+              <div class="ff"><label class="flbl">Payment Date</label>
+                <input class="finput" type="date" value="2026-02-25"/>
+              </div>
+              <div class="ff"><label class="flbl">Department Filter</label>
+                <select class="fselect"><option>All Departments (247)</option><option>Technology (62)</option><option>Finance (28)</option><option>Operations (51)</option><option>HR (19)</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pr-panel" style="margin-bottom:14px">
+          <div class="pr-panel-hd"><div class="pr-panel-title">⚙️ Payroll Inclusions</div></div>
+          <div class="pr-panel-body">
+            <div class="pr-inc-grid">
+              <div class="pr-toggle"><div class="pr-toggle-l">🏠 Housing Allowance</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="pr-toggle"><div class="pr-toggle-l">🚗 Transport Allowance</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="pr-toggle"><div class="pr-toggle-l">📱 Mobile Allowance</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="pr-toggle"><div class="pr-toggle-l">🏥 GOSI Deduction</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="pr-toggle"><div class="pr-toggle-l">📊 Income Tax (where applicable)</div><div class="toggle-sw" onclick="this.classList.toggle('on')"></div></div>
+              <div class="pr-toggle"><div class="pr-toggle-l">✈️ End of Service Accrual</div><div class="toggle-sw on" onclick="this.classList.toggle('on')"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px">
+          <button class="btn btn-secondary" onclick="nav('payroll')">Cancel</button>
+          <button class="btn btn-primary" onclick="prGoStep(2)">Review Payslips →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: REVIEW -->
+      <div id="pr-s2" style="display:none">
+        <div class="kpi-row" style="margin-bottom:14px">
+          <div class="kpi-c"><div class="kpi-ico" style="background:var(--ind-lt)">👥</div><div><div class="kpi-val" style="color:var(--ind)" id="pr-emp-count">247</div><div class="kpi-lbl">Employees</div></div></div>
+          <div class="kpi-c"><div class="kpi-ico" style="background:var(--cyan-lt)">💰</div><div><div class="kpi-val" style="color:var(--cyan)" id="pr-gross-total">2,100,000</div><div class="kpi-lbl">Gross SAR</div></div></div>
+          <div class="kpi-c"><div class="kpi-ico" style="background:var(--rose-lt)">📉</div><div><div class="kpi-val" style="color:var(--rose)" id="pr-ded-total">189,000</div><div class="kpi-lbl">Deductions SAR</div></div></div>
+          <div class="kpi-c"><div class="kpi-ico" style="background:var(--emerald-lt)">💳</div><div><div class="kpi-val" style="color:var(--emerald)" id="pr-net-total">1,911,000</div><div class="kpi-lbl">Net Payable SAR</div></div></div>
+        </div>
+
+        <div class="pr-panel" style="margin-bottom:14px">
+          <div class="pr-panel-hd">
+            <div class="pr-panel-title">👤 Payroll Preview — Feb 2026</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="sw"><span class="sw-ico">🔍</span><input type="text" placeholder="Search employee…" style="width:180px" oninput="filterPayrollTable(this.value)"></div>
+              <span class="dim-t" id="pr-tbl-ct">Showing 6 of 247</span>
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Emp ID</th><th>Employee</th><th>Department</th>
+                  <th style="text-align:right">Basic SAR</th>
+                  <th style="text-align:right">Housing</th>
+                  <th style="text-align:right">Transport</th>
+                  <th style="text-align:right">Other Allow.</th>
+                  <th style="text-align:right">Gross</th>
+                  <th style="text-align:right">GOSI Ded.</th>
+                  <th style="text-align:right">Net Pay</th>
+                  <th>WPS</th>
+                </tr>
+              </thead>
+              <tbody id="pr-emp-body"></tbody>
+              <tfoot>
+                <tr class="pr-total-row">
+                  <td colspan="3" style="font-weight:800;font-family:'Bricolage Grotesque',sans-serif">TOTAL (247 employees)</td>
+                  <td class="sal-cell" style="text-align:right">1,235,000</td>
+                  <td class="sal-cell" style="text-align:right">370,500</td>
+                  <td class="sal-cell" style="text-align:right">123,500</td>
+                  <td class="sal-cell" style="text-align:right">371,000</td>
+                  <td class="sal-cell" style="text-align:right;color:var(--cyan);font-weight:800">2,100,000</td>
+                  <td class="sal-cell" style="text-align:right;color:var(--rose)">189,000</td>
+                  <td class="sal-cell" style="text-align:right;color:var(--emerald);font-weight:800">1,911,000</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="pagination"><div>Showing sample · <strong>247</strong> total records</div></div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <button class="btn btn-secondary" onclick="prGoStep(1)">← Back</button>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="exportPayrollPreview()">⬇ Export Preview</button>
+            <button class="btn btn-primary" onclick="prGoStep(3)">Generate Payroll ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: RUNNING -->
+      <div id="pr-s3" style="display:none">
+        <div class="pr-panel">
+          <div class="pr-panel-hd"><div class="pr-panel-title">⚙️ Processing Payroll — February 2026</div></div>
+          <div class="run-progress">
+            <div class="run-spinner" id="run-spinner"></div>
+            <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--navy)" id="run-headline">Initialising payroll engine…</div>
+            <div style="font-size:12px;color:var(--t3);margin-top:4px" id="run-sub">Please wait, this may take a few seconds</div>
+            <div class="run-step-list" id="run-step-list">
+              <div class="rsl-item" id="rsl-1"><div class="rsl-ico running">⚙</div><span>Validating employee records</span></div>
+              <div class="rsl-item" id="rsl-2"><div class="rsl-ico pending">○</div><span>Calculating basic salaries & allowances</span></div>
+              <div class="rsl-item" id="rsl-3"><div class="rsl-ico pending">○</div><span>Computing GOSI contributions</span></div>
+              <div class="rsl-item" id="rsl-4"><div class="rsl-ico pending">○</div><span>Applying deductions & adjustments</span></div>
+              <div class="rsl-item" id="rsl-5"><div class="rsl-ico pending">○</div><span>Generating payslips (247 employees)</span></div>
+              <div class="rsl-item" id="rsl-6"><div class="rsl-ico pending">○</div><span>Preparing WPS bank file</span></div>
+              <div class="rsl-item" id="rsl-7"><div class="rsl-ico pending">○</div><span>Finalising payroll session</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: RESULTS -->
+      <div id="pr-s4" style="display:none">
+        <div class="pr-result-grid">
+          <div class="prc"><div class="prc-ico" style="background:var(--emerald-lt)">✅</div><div><div class="prc-val" style="color:var(--emerald)">247</div><div class="prc-lbl">Payslips Generated</div></div></div>
+          <div class="prc"><div class="prc-ico" style="background:var(--cyan-lt)">💰</div><div><div class="prc-val" style="color:var(--cyan)">2,100,000</div><div class="prc-lbl">Gross SAR</div></div></div>
+          <div class="prc"><div class="prc-ico" style="background:var(--teal-lt)">🏦</div><div><div class="prc-val" style="color:var(--teal)">1,911,000</div><div class="prc-lbl">Net Payable SAR</div></div></div>
+          <div class="prc"><div class="prc-ico" style="background:var(--violet-lt)">🏥</div><div><div class="prc-val" style="color:var(--violet)">189,000</div><div class="prc-lbl">GOSI Deducted SAR</div></div></div>
+        </div>
+
+        <div class="pr-panel" style="margin-bottom:14px">
+          <div class="pr-panel-hd">
+            <div>
+              <div class="pr-panel-title">✅ Payroll Session Complete — February 2026</div>
+              <div style="font-size:11px;color:var(--t3);margin-top:2px">Session ID: PAY-2026-02-001 · Generated: 23 Feb 2026, 09:47 AM · Processed by: HR Admin</div>
+            </div>
+            <span class="pill p-active" style="font-size:11px;padding:4px 10px"><span class="pdot"></span>Finalised</span>
+          </div>
+          <div class="pr-panel-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+              <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ind);margin-bottom:8px">💰 Salary Breakdown</div>
+                <div style="display:flex;flex-direction:column;gap:5px;font-size:12px">
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">Basic Salaries</span><span class="sal-cell">1,235,000</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">Housing Allow.</span><span class="sal-cell">370,500</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">Transport Allow.</span><span class="sal-cell">123,500</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">Other Allow.</span><span class="sal-cell">371,000</span></div>
+                  <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:5px;font-weight:700"><span>Gross Total</span><span class="sal-cell" style="color:var(--cyan)">2,100,000</span></div>
+                </div>
+              </div>
+              <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--rose);margin-bottom:8px">📉 Deductions</div>
+                <div style="display:flex;flex-direction:column;gap:5px;font-size:12px">
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">GOSI — Saudi (9%)</span><span class="sal-cell">111,150</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">GOSI — Expat (2%)</span><span class="sal-cell">24,700</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">Employer GOSI (12%)</span><span class="sal-cell">148,200</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">Other Deductions</span><span class="sal-cell">53,150</span></div>
+                  <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:5px;font-weight:700"><span>Total Deductions</span><span class="sal-cell" style="color:var(--rose)">189,000</span></div>
+                </div>
+              </div>
+              <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--emerald);margin-bottom:8px">🏦 WPS Status</div>
+                <div style="display:flex;flex-direction:column;gap:5px;font-size:12px">
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">Al Rajhi Bank</span><span class="sal-cell">124</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">SNB</span><span class="sal-cell">67</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">Riyad Bank</span><span class="sal-cell">38</span></div>
+                  <div style="display:flex;justify-content:space-between"><span style="color:var(--t3)">Alinma Bank</span><span class="sal-cell">10</span></div>
+                  <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:5px;font-weight:700"><span>Pending IBAN</span><span class="sal-cell" style="color:var(--amber)">8</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <button class="btn btn-secondary" onclick="nav('payroll')">← Back to Payroll</button>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary" onclick="exportPayrollResult()">⬇ Export Payroll Excel</button>
+            <button class="btn btn-primary" onclick="showToast('✅ Payroll approved & locked')">🔒 Approve & Lock Session</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EMPLOYEES TABLE -->
+    <div class="view" id="view-employees">
+      <div class="data-header">
+        <div><div class="data-title">Employee Data</div><div class="data-desc">All staff records, compliance and employment details</div></div>
+        <div class="data-acts"><button class="btn btn-secondary btn-sm" onclick="exportEmployees()">⬇ Export Excel</button><button class="btn btn-primary btn-sm" onclick="openModal('add')">＋ Add Employee</button></div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--ind-lt)">👥</div><div><div class="kpi-val" style="color:var(--ind)">247</div><div class="kpi-lbl">Total Staff</div></div></div>
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--teal-lt)">🇸🇦</div><div><div class="kpi-val" style="color:var(--teal)">181</div><div class="kpi-lbl">Saudi</div></div></div>
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--amber-lt)">⚠️</div><div><div class="kpi-val" style="color:var(--amber)">8</div><div class="kpi-lbl">Iqama Renewals</div></div></div>
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--rose-lt)">📋</div><div><div class="kpi-val" style="color:var(--rose)">14</div><div class="kpi-lbl">On Probation</div></div></div>
+      </div>
+      <div class="toolbar">
+        <div class="sw"><span class="sw-ico">🔍</span><input type="text" placeholder="Search name, ID, department…"></div>
+        <select class="fsel"><option>All Departments</option><option>Technology</option><option>Finance</option><option>Operations</option><option>HR</option><option>Marketing</option></select>
+        <select class="fsel"><option>All Nationalities</option><option>Saudi</option><option>Expatriate</option></select>
+        <select class="fsel"><option>All Statuses</option><option>Active</option><option>Probation</option><option>Inactive</option></select>
+      </div>
+      <div class="tbl-card">
+        <div class="tbl-hd"><div class="tbl-title">All Employees</div><div class="tbl-ct" id="empCt">6 of 247</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>EMP ID</th><th>Employee</th><th>Department</th><th>Nationality</th><th>ID / Iqama</th><th>Expiry</th><th>GOSI</th><th>Status</th><th></th></tr></thead><tbody id="empBody"></tbody></table></div>
+        <div class="pagination"><div>Page 1 of 42 · <strong>247</strong> records</div><div class="pg-btns"><button class="pgbtn">‹</button><button class="pgbtn active">1</button><button class="pgbtn">2</button><button class="pgbtn">3</button><button class="pgbtn">›</button></div></div>
+      </div>
+    </div>
+
+    <!-- DEPARTMENTS -->
+    <div class="view" id="view-departments">
+      <div class="data-header">
+        <div><div class="data-title">Departments</div><div class="data-desc">Organizational structure and department management</div></div>
+        <div class="data-acts"><div class="sw"><span class="sw-ico">🔍</span><input type="text" placeholder="Search…" style="width:180px"></div><button class="btn btn-secondary btn-sm" onclick="exportDepartments()">⬇ Export Excel</button><button class="btn btn-primary btn-sm" onclick="showToast('✅ Department form opened')">＋ Add Department</button></div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--teal-lt)">🏢</div><div><div class="kpi-val" style="color:var(--teal)">7</div><div class="kpi-lbl">Departments</div></div></div>
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--violet-lt)">📂</div><div><div class="kpi-val" style="color:var(--violet)">18</div><div class="kpi-lbl">Sub-Departments</div></div></div>
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--ind-lt)">👥</div><div><div class="kpi-val" style="color:var(--ind)">62</div><div class="kpi-lbl">Largest Dept</div></div></div>
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--emerald-lt)">📊</div><div><div class="kpi-val" style="color:var(--emerald)">79%</div><div class="kpi-lbl">Fill Rate</div></div></div>
+      </div>
+      <div class="dept-cards" id="deptGrid"></div>
+    </div>
+
+    <!-- SUB-DEPARTMENTS -->
+    <div class="view" id="view-subdepartments">
+      <div class="data-header">
+        <div><div class="data-title">Sub-Departments</div><div class="data-desc">Teams and divisions within departments</div></div>
+        <div class="data-acts"><div class="sw"><span class="sw-ico">🔍</span><input type="text" placeholder="Search…" style="width:180px"></div><select class="fsel"><option>All Departments</option><option>Technology</option><option>Finance</option><option>Operations</option><option>HR</option></select><button class="btn btn-secondary btn-sm" onclick="exportDepartments()">⬇ Export Excel</button><button class="btn btn-primary btn-sm" onclick="showToast('✅ Team form opened')">＋ Add Team</button></div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--violet-lt)">📂</div><div><div class="kpi-val" style="color:var(--violet)">18</div><div class="kpi-lbl">Total Teams</div></div></div>
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--ind-lt)">👤</div><div><div class="kpi-val" style="color:var(--ind)">10</div><div class="kpi-lbl">Avg Team Size</div></div></div>
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--teal-lt)">🏢</div><div><div class="kpi-val" style="color:var(--teal)">7</div><div class="kpi-lbl">Parent Depts</div></div></div>
+        <div class="kpi-c"><div class="kpi-ico" style="background:var(--emerald-lt)">🏆</div><div><div class="kpi-val" style="color:var(--emerald)">24</div><div class="kpi-lbl">Largest Team</div></div></div>
+      </div>
+      <div class="tbl-card">
+        <div class="tbl-hd"><div class="tbl-title">All Sub-Departments</div><div class="tbl-ct">18 teams</div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Code</th><th>Team Name</th><th>Parent Dept</th><th>Team Lead</th><th>Headcount</th><th>Cost Center</th><th>Status</th><th></th></tr></thead><tbody id="subDeptBody"></tbody></table></div>
+        <div class="pagination"><div><strong>18</strong> sub-departments</div><div class="pg-btns"><button class="pgbtn active">1</button><button class="pgbtn">2</button></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bd" id="modalBd" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="m-hd">
+      <div class="m-hd-l"><div class="m-hd-ico">👤</div><div><div class="m-hd-title" id="mTitle">Add New Employee</div><div class="m-hd-sub">Fill required fields to create record</div></div></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="m-tag" id="mTag">NEW</span><button class="m-close" onclick="closeModal()">×</button></div>
+    </div>
+    <div class="m-tabs">
+      <button class="mtab active" onclick="switchTab(this,'tp-pers')">👤 Personal</button>
+      <button class="mtab" onclick="switchTab(this,'tp-emp')">💼 Employment</button>
+      <button class="mtab" onclick="switchTab(this,'tp-comp')">🆔 KSA Compliance</button>
+      <button class="mtab" onclick="switchTab(this,'tp-pay')">💰 Payroll</button>
+      <button class="mtab" onclick="switchTab(this,'tp-emrg')">🚨 Emergency</button>
+    </div>
+    <div class="m-body">
+      <div class="tp active" id="tp-pers">
+        <div class="slbl">👤 Basic Information</div>
+        <div class="fg fg-3"><div class="ff"><label class="flbl">First Name EN <span class="req">*</span></label><input class="finput" id="f_first" placeholder="Ahmed"/></div><div class="ff"><label class="flbl">Middle Name</label><input class="finput" placeholder="Ali"/></div><div class="ff"><label class="flbl">Last Name EN <span class="req">*</span></label><input class="finput" id="f_last" placeholder="Al-Rashid"/></div></div>
+        <div class="fg fg-3" style="margin-top:8px"><div class="ff"><label class="flbl">الاسم الأول</label><input class="finput" placeholder="أحمد" dir="rtl"/></div><div class="ff"><label class="flbl">الاسم الأوسط</label><input class="finput" placeholder="علي" dir="rtl"/></div><div class="ff"><label class="flbl">اسم العائلة</label><input class="finput" placeholder="الراشد" dir="rtl"/></div></div>
+        <div class="slbl" style="margin-top:16px">📋 Details</div>
+        <div class="fg fg-4"><div class="ff"><label class="flbl">Date of Birth <span class="req">*</span></label><input class="finput" type="date"/></div><div class="ff"><label class="flbl">Gender <span class="req">*</span></label><select class="fselect"><option value="">Select</option><option>Male</option><option>Female</option></select></div><div class="ff"><label class="flbl">Marital Status</label><select class="fselect"><option value="">Select</option><option>Single</option><option>Married</option></select></div><div class="ff"><label class="flbl">Dependents</label><input class="finput" type="number" placeholder="0" min="0"/></div></div>
+        <div class="fg fg-3" style="margin-top:8px"><div class="ff"><label class="flbl">Nationality <span class="req">*</span></label><select class="fselect" id="f_nat" onchange="handleNat()"><option value="">Select</option><option value="Saudi">Saudi 🇸🇦</option><option value="Indian">Indian 🇮🇳</option><option value="Pakistani">Pakistani 🇵🇰</option><option value="Egyptian">Egyptian 🇪🇬</option><option value="Other">Other</option></select></div><div class="ff"><label class="flbl">Religion</label><select class="fselect"><option value="">Select</option><option>Muslim</option><option>Christian</option><option>Hindu</option><option>Other</option></select></div><div class="ff"><label class="flbl">Blood Group</label><select class="fselect"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>O+</option><option>O-</option></select></div></div>
+        <div class="slbl" style="margin-top:16px">📬 Contact</div>
+        <div class="fg fg-2"><div class="ff"><label class="flbl">Mobile KSA <span class="req">*</span></label><input class="finput mono" placeholder="+966 5X XXX XXXX"/></div><div class="ff"><label class="flbl">Personal Email</label><input class="finput" type="email" placeholder="name@email.com"/></div><div class="ff"><label class="flbl">Work Email</label><input class="finput" type="email" placeholder="name@company.com.sa"/></div><div class="ff"><label class="flbl">City</label><select class="fselect"><option value="">Select City</option><option>Riyadh</option><option>Jeddah</option><option>Dammam</option><option>Mecca</option><option>Other</option></select></div></div>
+      </div>
+      <div class="tp" id="tp-emp">
+        <div class="slbl">💼 Job Info</div>
+        <div class="fg fg-3"><div class="ff"><label class="flbl">Employee ID <span class="req">*</span></label><input class="finput mono" id="f_empid" placeholder="EMP007"/></div><div class="ff"><label class="flbl">Job Title EN <span class="req">*</span></label><input class="finput" id="f_title" placeholder="Senior Engineer"/></div><div class="ff"><label class="flbl">المسمى الوظيفي</label><input class="finput" placeholder="مهندس أول" dir="rtl"/></div></div>
+        <div class="fg fg-3" style="margin-top:8px"><div class="ff"><label class="flbl">Department <span class="req">*</span></label><select class="fselect" id="f_dept"><option value="">Select</option><option>Technology</option><option>Finance</option><option>Operations</option><option>Human Resources</option><option>Marketing</option><option>Legal</option></select></div><div class="ff"><label class="flbl">Sub-Department</label><select class="fselect"><option value="">Select</option><option>Software Development</option><option>Infrastructure</option><option>Accounting</option><option>Procurement</option></select></div><div class="ff"><label class="flbl">Cost Center</label><input class="finput mono" placeholder="CC-1001"/></div></div>
+        <div class="fg fg-3" style="margin-top:8px"><div class="ff"><label class="flbl">Contract Type <span class="req">*</span></label><select class="fselect"><option value="">Select</option><option>Permanent</option><option>Fixed-Term</option><option>Part-Time</option></select></div><div class="ff"><label class="flbl">Hire Date <span class="req">*</span></label><input class="finput" type="date" id="f_hire"/></div><div class="ff"><label class="flbl">Contract End</label><input class="finput" type="date"/></div></div>
+        <div class="fg fg-2" style="margin-top:8px"><div class="ff"><label class="flbl">Probation</label><select class="fselect"><option>90 Days</option><option>180 Days (max)</option><option>No Probation</option></select></div><div class="ff"><label class="flbl">Work Location</label><select class="fselect"><option>Riyadh HQ</option><option>Jeddah Branch</option><option>Dammam Branch</option><option>Remote</option></select></div></div>
+      </div>
+      <div class="tp" id="tp-comp">
+        <div id="saudiSec"><div class="slbl">🪪 Saudi National ID</div><div class="fg fg-3"><div class="ff"><label class="flbl">National ID <span class="req">*</span></label><input class="finput mono" id="f_natid" placeholder="1XXXXXXXXX" maxlength="10"/><div class="fhint">10-digit ID</div></div><div class="ff"><label class="flbl">Issue (Hijri)</label><input class="finput" placeholder="1440/05/15"/></div><div class="ff"><label class="flbl">Expiry (Hijri)</label><input class="finput" placeholder="1446/05/15"/></div></div></div>
+        <div id="iqamaSec"><div class="slbl">🆔 Iqama</div><div class="fg fg-3"><div class="ff"><label class="flbl">Iqama No. <span class="req">*</span></label><input class="finput mono" id="f_iqama" placeholder="2XXXXXXXXX" maxlength="10"/></div><div class="ff"><label class="flbl">Issue Date</label><input class="finput" type="date"/></div><div class="ff"><label class="flbl">Expiry <span class="req">*</span></label><input class="finput" type="date"/></div></div><div class="fg fg-3" style="margin-top:8px"><div class="ff"><label class="flbl">Sponsor</label><input class="finput" placeholder="Company name"/></div><div class="ff"><label class="flbl">Sponsor ID</label><input class="finput mono" placeholder="7XXXXXXXXX"/></div><div class="ff"><label class="flbl">Profession</label><input class="finput" placeholder="Engineer"/></div></div></div>
+        <div class="slbl" style="margin-top:16px">✈️ Passport</div>
+        <div class="fg fg-4"><div class="ff"><label class="flbl">Passport No.</label><input class="finput mono" placeholder="A12345678"/></div><div class="ff"><label class="flbl">Issue Date</label><input class="finput" type="date"/></div><div class="ff"><label class="flbl">Expiry <span class="req">*</span></label><input class="finput" type="date"/></div><div class="ff"><label class="flbl">Country</label><input class="finput" placeholder="Saudi Arabia"/></div></div>
+        <div class="slbl" style="margin-top:16px">🏥 GOSI & Banking</div>
+        <div class="fg fg-3"><div class="ff"><label class="flbl">GOSI Number</label><input class="finput mono" placeholder="GOSI ID"/></div><div class="ff"><label class="flbl">GOSI Category</label><select class="fselect"><option value="">Select</option><option>Saudi — 22%</option><option>Expat — 2%</option></select></div><div class="ff"><label class="flbl">Bank</label><select class="fselect"><option value="">Select</option><option>Al Rajhi Bank</option><option>SNB</option><option>Riyad Bank</option><option>Alinma Bank</option></select></div></div>
+        <div class="fg fg-2" style="margin-top:8px"><div class="ff"><label class="flbl">IBAN <span class="req">*</span></label><input class="finput mono" placeholder="SA00 0000 0000 0000 0000 0000"/></div><div class="ff"><label class="flbl">WPS Status</label><select class="fselect"><option>Registered</option><option>Pending</option><option>Exempt</option></select></div></div>
+      </div>
+      <div class="tp" id="tp-pay">
+        <div class="slbl">💰 Salary</div>
+        <div class="fg fg-3"><div class="ff"><label class="flbl">Basic Salary SAR <span class="req">*</span></label><input class="finput mono" id="f_basic" type="number" placeholder="10,000" oninput="calcSal()"/></div><div class="ff"><label class="flbl">Housing Allowance</label><input class="finput mono" id="f_housing" type="number" placeholder="3,000" oninput="calcSal()"/><div class="fhint">~25% of basic</div></div><div class="ff"><label class="flbl">Transport Allowance</label><input class="finput mono" id="f_transport" type="number" placeholder="1,000" oninput="calcSal()"/></div></div>
+        <div class="fg fg-3" style="margin-top:8px"><div class="ff"><label class="flbl">Mobile Allowance</label><input class="finput mono" id="f_moballow" type="number" placeholder="500" oninput="calcSal()"/></div><div class="ff"><label class="flbl">Other Allowances</label><input class="finput mono" id="f_other" type="number" placeholder="0" oninput="calcSal()"/></div><div class="ff"><label class="flbl">Total Package/mo</label><input class="finput mono" id="f_total" readonly placeholder="Auto" style="opacity:0.6;background:var(--bg2)"/></div></div>
+        <div class="slbl" style="margin-top:16px">📆 Leave (Saudi Labor Law)</div>
+        <div class="fg fg-4"><div class="ff"><label class="flbl">Annual Leave</label><input class="finput" type="number" value="21"/><div class="fhint">30 after 5yrs</div></div><div class="ff"><label class="flbl">Sick Leave</label><input class="finput" type="number" value="120"/></div><div class="ff"><label class="flbl">Maternity Leave</label><input class="finput" type="number" value="70"/></div><div class="ff"><label class="flbl">Hajj Leave</label><input class="finput" type="number" value="10"/></div></div>
+      </div>
+      <div class="tp" id="tp-emrg">
+        <div class="slbl">🚨 Emergency Contact</div>
+        <div class="fg fg-2"><div class="ff"><label class="flbl">Full Name <span class="req">*</span></label><input class="finput" placeholder="Full name"/></div><div class="ff"><label class="flbl">Relationship</label><select class="fselect"><option value="">Select</option><option>Spouse</option><option>Father</option><option>Mother</option><option>Brother</option><option>Sister</option><option>Other</option></select></div><div class="ff"><label class="flbl">Mobile</label><input class="finput mono" placeholder="+966 5X XXX XXXX"/></div><div class="ff"><label class="flbl">City</label><input class="finput" placeholder="Riyadh"/></div></div>
+        <div class="slbl" style="margin-top:16px">📝 Notes</div>
+        <div class="fg"><div class="ff ff-full"><label class="flbl">Internal HR Notes</label><textarea class="ftextarea" placeholder="Additional notes…" rows="3"></textarea></div></div>
+      </div>
+    </div>
+    <div class="m-ft">
+      <span class="m-ft-hint">Fields marked <span style="color:var(--rose)">*</span> are required</span>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="mSave" onclick="saveEmp()">💾 Save Employee</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="tIcon">✅</span><span id="tMsg">Saved</span></div>
+
+<script>
+const employees=[
+  {id:'EMP001',first:'Ahmed',last:'Al-Rashid',pos:'Senior Engineer',dept:'Technology',nat:'Saudi',natid:'1098765432',iqama:'',iqamaExp:'',gosi:true,status:'active',color:'#3D5AF1'},
+  {id:'EMP002',first:'Sara',last:'Al-Harbi',pos:'Financial Analyst',dept:'Finance',nat:'Saudi',natid:'1023456789',iqama:'',iqamaExp:'',gosi:true,status:'active',color:'#7C3AED'},
+  {id:'EMP003',first:'Omar',last:'Bin Khalid',pos:'CTO',dept:'Technology',nat:'Saudi',natid:'1055544433',iqama:'',iqamaExp:'',gosi:true,status:'active',color:'#0D9488'},
+  {id:'EMP004',first:'Priya',last:'Sharma',pos:'Project Manager',dept:'Operations',nat:'Indian',natid:'',iqama:'2034567891',iqamaExp:'2025-04-15',gosi:true,status:'active',color:'#D97706'},
+  {id:'EMP005',first:'Hassan',last:'Al-Ghamdi',pos:'HR Specialist',dept:'HR',nat:'Saudi',natid:'1077788899',iqama:'',iqamaExp:'',gosi:false,status:'probation',color:'#E11D48'},
+  {id:'EMP006',first:'Tariq',last:'Al-Otaibi',pos:'Marketing Executive',dept:'Marketing',nat:'Saudi',natid:'1033344455',iqama:'',iqamaExp:'',gosi:true,status:'inactive',color:'#B45309'},
+];
+const departments=[
+  {id:'TECH',name:'Technology',ar:'تقنية المعلومات',head:'Omar Bin Khalid',hc:'#0D9488',count:62,budget:80,subs:['Software Dev','Infrastructure','Data & Analytics','Security'],color:'#3D5AF1',icon:'💻'},
+  {id:'FIN',name:'Finance',ar:'المالية',head:'Maha Al-Saud',hc:'#7C3AED',count:28,budget:35,subs:['Accounting','Treasury','Audit','FP&A'],color:'#7C3AED',icon:'💰'},
+  {id:'OPS',name:'Operations',ar:'العمليات',head:'Khalid Al-Mutairi',hc:'#D97706',count:51,budget:60,subs:['Procurement','Logistics','Facilities','QA'],color:'#0D9488',icon:'⚙️'},
+  {id:'HR',name:'HR',ar:'الموارد البشرية',head:'Noura Al-Qahtani',hc:'#E11D48',count:19,budget:25,subs:['Recruitment','Payroll','L&D'],color:'#D97706',icon:'👥'},
+  {id:'MKT',name:'Marketing',ar:'التسويق',head:'Faisal Al-Harbi',hc:'#B45309',count:23,budget:30,subs:['Brand','Digital','PR'],color:'#E11D48',icon:'📣'},
+  {id:'LEG',name:'Legal',ar:'الشؤون القانونية',head:'Salwa Al-Rashid',hc:'#3D5AF1',count:11,budget:15,subs:['Contracts','Compliance'],color:'#B45309',icon:'⚖️'},
+  {id:'EXC',name:'Executive',ar:'الإدارة التنفيذية',head:'CEO Office',hc:'#0D9488',count:8,budget:10,subs:['CEO Office','Strategy'],color:'#0891B2',icon:'🏛️'},
+];
+const subDepts=[
+  {code:'TECH-SW',name:'Software Development',parent:'Technology',lead:'Abdullah Al-Zahrani',count:24,cc:'CC-1001',color:'#3D5AF1'},
+  {code:'TECH-INF',name:'Infrastructure',parent:'Technology',lead:'Yasser Al-Dawsari',count:15,cc:'CC-1002',color:'#3D5AF1'},
+  {code:'TECH-DA',name:'Data & Analytics',parent:'Technology',lead:'Reem Al-Farsi',count:12,cc:'CC-1003',color:'#3D5AF1'},
+  {code:'TECH-SEC',name:'Cybersecurity',parent:'Technology',lead:'Majed Al-Shehri',count:11,cc:'CC-1004',color:'#3D5AF1'},
+  {code:'FIN-ACC',name:'Accounting',parent:'Finance',lead:'Heba Mohamed',count:9,cc:'CC-2001',color:'#7C3AED'},
+  {code:'FIN-TRE',name:'Treasury',parent:'Finance',lead:'Bandar Al-Qahtani',count:7,cc:'CC-2002',color:'#7C3AED'},
+  {code:'FIN-AUD',name:'Internal Audit',parent:'Finance',lead:'Suha Al-Anzi',count:6,cc:'CC-2003',color:'#7C3AED'},
+  {code:'FIN-FPA',name:'FP&A',parent:'Finance',lead:'Ibrahim Nasser',count:6,cc:'CC-2004',color:'#7C3AED'},
+  {code:'OPS-PRO',name:'Procurement',parent:'Operations',lead:'Saad Al-Otaibi',count:14,cc:'CC-3001',color:'#0D9488'},
+  {code:'OPS-LOG',name:'Logistics',parent:'Operations',lead:'Faris Al-Balawi',count:18,cc:'CC-3002',color:'#0D9488'},
+  {code:'OPS-FAC',name:'Facilities',parent:'Operations',lead:'Turki Al-Ghamdi',count:12,cc:'CC-3003',color:'#0D9488'},
+  {code:'OPS-QUA',name:'Quality Assurance',parent:'Operations',lead:'Wafaa Al-Subaie',count:7,cc:'CC-3004',color:'#0D9488'},
+  {code:'HR-REC',name:'Recruitment',parent:'HR',lead:'Layla Al-Harbi',count:5,cc:'CC-4001',color:'#D97706'},
+  {code:'HR-PAY',name:'Payroll',parent:'HR',lead:'Ali Al-Shamrani',count:4,cc:'CC-4002',color:'#D97706'},
+  {code:'HR-LND',name:'L&D',parent:'HR',lead:'Raneem Al-Dosari',count:5,cc:'CC-4003',color:'#D97706'},
+  {code:'MKT-BRD',name:'Brand & Creative',parent:'Marketing',lead:'Dina Al-Zahrani',count:8,cc:'CC-5001',color:'#E11D48'},
+  {code:'MKT-DIG',name:'Digital Marketing',parent:'Marketing',lead:'Fahad Al-Qurashi',count:9,cc:'CC-5002',color:'#E11D48'},
+  {code:'LEG-CON',name:'Legal Affairs',parent:'Legal',lead:'Manal Al-Rashid',count:11,cc:'CC-6001',color:'#B45309'},
+];
+
+const ini=(f,l)=>(f[0]||'').toUpperCase()+(l[0]||'').toUpperCase();
+const fdt=d=>d?new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'—';
+const du=d=>d?Math.ceil((new Date(d)-new Date())/86400000):null;
+
+const bcmap={
+  home:[{l:'Dashboard'}],
+  coredata:[{l:'Dashboard',v:'home'},{l:'Core Data'}],
+  payroll:[{l:'Dashboard',v:'home'},{l:'Payroll'}],
+  attendance:[{l:'Dashboard',v:'home'},{l:'Attendance'}],
+  performance:[{l:'Dashboard',v:'home'},{l:'Performance'}],
+  setup:[{l:'Dashboard',v:'home'},{l:'Setup'}],
+  employees:[{l:'Dashboard',v:'home'},{l:'Core Data',v:'coredata'},{l:'Employee Data'}],
+  departments:[{l:'Dashboard',v:'home'},{l:'Core Data',v:'coredata'},{l:'Departments'}],
+  subdepartments:[{l:'Dashboard',v:'home'},{l:'Core Data',v:'coredata'},{l:'Sub-Departments'}],
+  payrollrun:[{l:'Dashboard',v:'home'},{l:'Payroll',v:'payroll'},{l:'Salary Processing'}],
+};
+
+function nav(id){
+  currentView = id;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el=document.getElementById('view-'+id);
+  if(el) el.classList.add('active');
+  const bc=document.getElementById('breadcrumb');
+  const cr=bcmap[id]||[{l:id}];
+  bc.innerHTML=cr.map((c,i)=>{
+    const last=i===cr.length-1;
+    return last?`<span class="bc-current">${c.l}</span>`:`<span class="bc-item" onclick="nav('${c.v}')">${c.l}</span><span class="bc-sep">›</span>`;
+  }).join('');
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  const sm={home:0,coredata:2,payroll:3,payrollrun:3,attendance:4,performance:5,setup:6};
+  const all=document.querySelectorAll('.nav-link');
+  const idx=sm[id]!==undefined?sm[id]:(['employees','departments','subdepartments'].includes(id)?2:-1);
+  if(idx>=0&&all[idx]) all[idx].classList.add('active');
+  const ab=document.getElementById('mainAddBtn');
+  if(id==='employees'){ab.textContent='＋ Add Employee';ab.onclick=()=>openModal('add');ab.style.display='';}
+  else if(id==='departments'){ab.textContent='＋ Add Department';ab.onclick=()=>showToast('✅ Department form');ab.style.display='';}
+  else if(id==='subdepartments'){ab.textContent='＋ Add Team';ab.onclick=()=>showToast('✅ Team form');ab.style.display='';}
+  else{ab.style.display='none';}
+}
+
+function renderEmp(){
+  document.getElementById('empBody').innerHTML=employees.map(e=>{
+    const s=e.nat==='Saudi';
+    const idH=s?`<span class="chip" style="background:var(--teal-lt);color:var(--teal)">${e.natid||'—'}</span>`:`<span class="chip" style="background:var(--amber-lt);color:var(--amber)">${e.iqama||'—'}</span>`;
+    const d=du(e.iqamaExp);
+    let ex=s?`<span class="dim-t">N/A</span>`:'';
+    if(!s){if(!e.iqamaExp)ex=`<span class="dim-t">—</span>`;else if(d<0)ex=`<span class="warn-t">⚠ Expired</span>`;else if(d<30)ex=`<span class="warn-t">⚠${d}d</span>`;else ex=`<span class="dim-t">${fdt(e.iqamaExp)}</span>`;}
+    const gc=e.gosi?`<span style="color:var(--emerald);font-weight:700;font-size:11.5px">✓</span>`:`<span style="color:var(--rose);font-weight:700;font-size:11.5px">✗</span>`;
+    const sc={active:'p-active',probation:'p-probation',inactive:'p-inactive'}[e.status];
+    const sl={active:'Active',probation:'Probation',inactive:'Inactive'}[e.status];
+    return `<tr onclick="openModal('view','${e.id}')">
+      <td><span class="chip" style="background:var(--ind-lt);color:var(--ind)">${e.id}</span></td>
+      <td><div class="ec"><div class="eav" style="background:${e.color}">${ini(e.first,e.last)}</div><div><div class="ename">${e.first} ${e.last}</div><div class="erole">${e.pos}</div></div></div></td>
+      <td><span class="dim-t" style="color:var(--t2)">${e.dept}</span></td>
+      <td><span class="pill ${s?'p-saudi':'p-expat'}">${s?'🇸🇦 Saudi':'🌍 '+e.nat}</span></td>
+      <td>${idH}</td><td>${ex}</td><td>${gc}</td>
+      <td><span class="pill ${sc}"><span class="pdot"></span>${sl}</span></td>
+      <td onclick="event.stopPropagation()"><div class="ra"><button class="btn btn-secondary btn-xs" onclick="openModal('edit','${e.id}')">✏</button><button class="btn btn-danger btn-xs" onclick="delEmp('${e.id}')">✕</button></div></td>
+    </tr>`;
+  }).join('');
+}
+function delEmp(id){if(!confirm('Remove?'))return;const i=employees.findIndex(e=>e.id===id);if(i>-1){employees.splice(i,1);renderEmp();showToast('Employee removed','warn');}}
+
+function renderDepts(){
+  document.getElementById('deptGrid').innerHTML=departments.map(d=>{
+    const p=Math.round((d.count/d.budget)*100);
+    const av=d.head.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const subs=d.subs.map(s=>`<span class="dc-sub-tag">${s}</span>`).join('');
+    return `<div class="dc">
+      <div class="dc-stripe" style="background:linear-gradient(90deg,${d.color},${d.color}60)"></div>
+      <div class="dc-body">
+        <div class="dc-top"><div class="dc-ico" style="background:${d.color}15">${d.icon}</div><div><div class="dc-name">${d.name}</div><div class="dc-code">${d.ar} · ${d.id}</div></div></div>
+        <div class="dc-stats"><div class="dc-stat"><div class="dc-sv" style="color:${d.color}">${d.count}</div><div class="dc-sl">Staff</div></div><div class="dc-stat"><div class="dc-sv">${d.subs.length}</div><div class="dc-sl">Teams</div></div><div class="dc-stat"><div class="dc-sv">${p}%</div><div class="dc-sl">Fill</div></div></div>
+        <div class="dc-bar-wrap"><div class="dc-bar" style="width:${p}%;background:linear-gradient(90deg,${d.color},${d.color}88)"></div></div>
+        <div class="dc-subs">${subs}</div>
+      </div>
+      <div class="dc-ft"><div class="dc-mgr"><div class="dc-mav" style="background:${d.hc}">${av}</div>${d.head}</div><button class="btn btn-secondary btn-xs" onclick="event.stopPropagation();showToast('Edit: ${d.name}')">✏ Edit</button></div>
+    </div>`;
+  }).join('');
+}
+
+function renderSubDepts(){
+  document.getElementById('subDeptBody').innerHTML=subDepts.map(sd=>{
+    const av=sd.lead.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    return `<tr>
+      <td><span class="chip" style="background:${sd.color}15;color:${sd.color}">${sd.code}</span></td>
+      <td><div style="display:flex;align-items:center;gap:7px"><span style="width:7px;height:7px;border-radius:2px;background:${sd.color};display:inline-block;flex-shrink:0"></span><span style="font-weight:600">${sd.name}</span></div></td>
+      <td><span class="dim-t">${sd.parent}</span></td>
+      <td><div style="display:flex;align-items:center;gap:6px"><div style="width:20px;height:20px;border-radius:50%;background:${sd.color};display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:800;color:#fff">${av}</div><span style="font-size:12px">${sd.lead}</span></div></td>
+      <td><strong>${sd.count}</strong></td>
+      <td><span class="chip" style="background:var(--bg2);color:var(--t3);font-size:10px">${sd.cc}</span></td>
+      <td><span class="pill p-active"><span class="pdot"></span>Active</span></td>
+      <td onclick="event.stopPropagation()"><div class="ra"><button class="btn btn-secondary btn-xs">✏</button><button class="btn btn-danger btn-xs">✕</button></div></td>
+    </tr>`;
+  }).join('');
+}
+
+let editId=null;
+function openModal(mode,id){
+  editId=id||null;document.getElementById('modalBd').classList.add('open');
+  switchTab(document.querySelector('.m-tabs .mtab'),'tp-pers');handleNat();
+  if(mode==='add'){document.getElementById('mTitle').textContent='Add New Employee';document.getElementById('mTag').textContent='NEW';document.getElementById('mSave').textContent='💾 Save';document.getElementById('mSave').onclick=saveEmp;}
+  else if(mode==='edit'){const e=employees.find(x=>x.id===id);document.getElementById('mTitle').textContent=`Edit — ${e.first} ${e.last}`;document.getElementById('mTag').textContent='EDIT';document.getElementById('mSave').textContent='💾 Update';document.getElementById('mSave').onclick=saveEmp;if(document.getElementById('f_first'))document.getElementById('f_first').value=e.first;if(document.getElementById('f_last'))document.getElementById('f_last').value=e.last;if(document.getElementById('f_empid'))document.getElementById('f_empid').value=e.id;if(document.getElementById('f_title'))document.getElementById('f_title').value=e.pos;}
+  else if(mode==='view'){const e=employees.find(x=>x.id===id);document.getElementById('mTitle').textContent=`${e.first} ${e.last}`;document.getElementById('mTag').textContent='PROFILE';document.getElementById('mSave').textContent='✏ Edit';document.getElementById('mSave').onclick=()=>openModal('edit',id);}
+}
+function closeModal(){document.getElementById('modalBd').classList.remove('open');}
+function handleNat(){const n=document.getElementById('f_nat');const s=n&&n.value==='Saudi';const ss=document.getElementById('saudiSec');const is=document.getElementById('iqamaSec');if(ss)ss.style.display=s?'block':'none';if(is)is.style.display=s?'none':'block';}
+function calcSal(){const g=id=>parseFloat(document.getElementById(id)?.value)||0;const t=g('f_basic')+g('f_housing')+g('f_transport')+g('f_moballow')+g('f_other');const el=document.getElementById('f_total');if(el)el.value=t>0?t.toLocaleString():'';}
+function saveEmp(){
+  const first=document.getElementById('f_first')?.value.trim();
+  const last=document.getElementById('f_last')?.value.trim();
+  const empid=document.getElementById('f_empid')?.value.trim();
+  if(!first||!last||!empid){showToast('Fill required fields','warn');return;}
+  const clrs=['#3D5AF1','#0D9488','#7C3AED','#D97706','#B45309','#E11D48','#0891B2'];
+  const data={id:empid,first,last,pos:document.getElementById('f_title')?.value||'—',dept:document.getElementById('f_dept')?.value||'—',nat:document.getElementById('f_nat')?.value||'Saudi',iqama:'',natid:'',iqamaExp:'',gosi:true,status:'active',color:clrs[Math.floor(Math.random()*clrs.length)]};
+  if(editId){const i=employees.findIndex(e=>e.id===editId);if(i>-1)employees[i]={...employees[i],...data,id:editId};showToast(`✅ ${first} ${last} updated`);}
+  else{if(employees.find(e=>e.id===empid)){showToast('ID already exists','warn');return;}employees.push(data);showToast(`✅ ${first} ${last} added`);}
+  renderEmp();closeModal();
+}
+function switchTab(el,pid){document.querySelectorAll('.m-tabs .mtab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');document.querySelectorAll('.tp').forEach(p=>p.classList.remove('active'));const p=document.getElementById(pid);if(p)p.classList.add('active');}
+
+let tt;
+function showToast(msg,type='ok'){const icons={ok:'✅',warn:'⚠️',err:'❌',info:'ℹ️'};document.getElementById('tIcon').textContent=icons[type]||'✅';document.getElementById('tMsg').textContent=msg;const t=document.getElementById('toast');t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2800);}
+
+
+/* ══ PAYROLL RUN ══ */
+let selectedPeriod = 'Feb 2026';
+
+function selectPeriod(el, period) {
+  document.querySelectorAll('.pc').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPeriod = period;
+}
+
+function prGoStep(n) {
+  // hide all step panels
+  for (let i = 1; i <= 4; i++) {
+    const p = document.getElementById('pr-s' + i);
+    if (p) p.style.display = 'none';
+    const s = document.getElementById('prstep-' + i);
+    if (s) { s.classList.remove('active', 'done'); if (i < n) s.classList.add('done'); }
+  }
+  const cur = document.getElementById('pr-s' + n);
+  if (cur) cur.style.display = '';
+  const curStep = document.getElementById('prstep-' + n);
+  if (curStep) curStep.classList.add('active');
+
+  if (n === 2) { renderPayrollTable(); }
+  if (n === 3) { runPayrollAnimation(); }
+}
+
+const payrollData = [
+  {id:'EMP001',name:'Ahmed Al-Rashid',dept:'Technology',basic:12000,housing:3600,transport:1200,other:800,gosiPct:0.09,wps:true,color:'#3D5AF1'},
+  {id:'EMP002',name:'Sara Al-Harbi',dept:'Finance',basic:9500,housing:2850,transport:950,other:500,gosiPct:0.09,wps:true,color:'#7C3AED'},
+  {id:'EMP003',name:'Omar Bin Khalid',dept:'Technology',basic:28000,housing:8400,transport:2000,other:2000,gosiPct:0.09,wps:true,color:'#0D9488'},
+  {id:'EMP004',name:'Priya Sharma',dept:'Operations',basic:11000,housing:3300,transport:1100,other:600,gosiPct:0.02,wps:true,color:'#D97706'},
+  {id:'EMP005',name:'Hassan Al-Ghamdi',dept:'HR',basic:7000,housing:2100,transport:700,other:300,gosiPct:0.09,wps:false,color:'#E11D48'},
+  {id:'EMP006',name:'Tariq Al-Otaibi',dept:'Marketing',basic:8500,housing:2550,transport:850,other:400,gosiPct:0.09,wps:true,color:'#B45309'},
+];
+
+function renderPayrollTable(filter = '') {
+  const fmt = n => n.toLocaleString('en-US');
+  const rows = payrollData.filter(e => !filter || e.name.toLowerCase().includes(filter.toLowerCase()) || e.id.toLowerCase().includes(filter));
+  document.getElementById('pr-tbl-ct').textContent = `Showing ${rows.length} of 247`;
+  document.getElementById('pr-emp-body').innerHTML = rows.map(e => {
+    const gross = e.basic + e.housing + e.transport + e.other;
+    const gosi = Math.round(e.basic * e.gosiPct);
+    const net = gross - gosi;
+    const wpsPill = e.wps
+      ? `<span class="pill p-active" style="font-size:9px"><span class="pdot"></span>Ready</span>`
+      : `<span class="pill p-probation" style="font-size:9px"><span class="pdot"></span>Pending</span>`;
+    return `<tr>
+      <td><span class="chip" style="background:var(--ind-lt);color:var(--ind)">${e.id}</span></td>
+      <td><div class="ec"><div class="eav" style="background:${e.color};width:26px;height:26px;font-size:9px">${e.name.split(' ').map(w=>w[0]).join('').slice(0,2)}</div><span style="font-weight:600;font-size:12px">${e.name}</span></div></td>
+      <td><span class="dim-t">${e.dept}</span></td>
+      <td class="sal-cell" style="text-align:right">${fmt(e.basic)}</td>
+      <td class="sal-cell" style="text-align:right">${fmt(e.housing)}</td>
+      <td class="sal-cell" style="text-align:right">${fmt(e.transport)}</td>
+      <td class="sal-cell" style="text-align:right">${fmt(e.other)}</td>
+      <td class="sal-cell" style="text-align:right;font-weight:700;color:var(--cyan)">${fmt(gross)}</td>
+      <td class="sal-cell" style="text-align:right;color:var(--rose)">-${fmt(gosi)}</td>
+      <td class="sal-cell" style="text-align:right;font-weight:700;color:var(--emerald)">${fmt(net)}</td>
+      <td>${wpsPill}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterPayrollTable(v) { renderPayrollTable(v); }
+
+function runPayrollAnimation() {
+  const steps = [
+    {id:'rsl-1', label:'Validating employee records', delay:600},
+    {id:'rsl-2', label:'Calculating salaries & allowances', delay:1400},
+    {id:'rsl-3', label:'Computing GOSI contributions', delay:2400},
+    {id:'rsl-4', label:'Applying deductions & adjustments', delay:3400},
+    {id:'rsl-5', label:'Generating payslips (247 employees)', delay:4600},
+    {id:'rsl-6', label:'Preparing WPS bank file', delay:5800},
+    {id:'rsl-7', label:'Finalising payroll session', delay:6800},
+  ];
+  const headlines = ['Validating employee records…','Calculating salaries…','Computing GOSI…','Applying deductions…','Generating 247 payslips…','Preparing WPS file…','Finalising…'];
+  steps.forEach((s, i) => {
+    // mark previous as done, current as running
+    setTimeout(() => {
+      if (i > 0) {
+        const prev = document.getElementById(steps[i-1].id);
+        if (prev) { prev.querySelector('.rsl-ico').className = 'rsl-ico done'; prev.querySelector('.rsl-ico').textContent = '✓'; }
+      }
+      const cur = document.getElementById(s.id);
+      if (cur) { cur.querySelector('.rsl-ico').className = 'rsl-ico running'; cur.querySelector('.rsl-ico').textContent = '⚙'; }
+      const hl = document.getElementById('run-headline');
+      if (hl) hl.textContent = headlines[i];
+    }, s.delay);
+  });
+  // Complete
+  setTimeout(() => {
+    const last = document.getElementById(steps[steps.length-1].id);
+    if (last) { last.querySelector('.rsl-ico').className = 'rsl-ico done'; last.querySelector('.rsl-ico').textContent = '✓'; }
+    const spinner = document.getElementById('run-spinner');
+    if (spinner) { spinner.style.borderTopColor = 'var(--emerald)'; spinner.style.animationDuration = '0.3s'; }
+    const hl = document.getElementById('run-headline');
+    if (hl) hl.textContent = '✅ Payroll complete!';
+    const sub = document.getElementById('run-sub');
+    if (sub) sub.textContent = '247 payslips generated · SAR 1,911,000 net payable';
+    setTimeout(() => prGoStep(4), 800);
+  }, 7800);
+}
+
+function exportPayrollPreview() {
+  const wb = XLSX.utils.book_new();
+  const hdrs = ['Emp ID','Employee','Department','Basic SAR','Housing','Transport','Other Allow.','Gross SAR','GOSI Ded.','Net Pay SAR','WPS Status'];
+  const rows = payrollData.map(e => {
+    const gross = e.basic + e.housing + e.transport + e.other;
+    const gosi = Math.round(e.basic * e.gosiPct);
+    return [e.id, e.name, e.dept, e.basic, e.housing, e.transport, e.other, gross, gosi, gross - gosi, e.wps ? 'Ready' : 'Pending'];
+  });
+  const ws = XLSX.utils.aoa_to_sheet([hdrs, ...rows]);
+  ws['!cols'] = [10,24,16,12,12,12,14,14,12,14,12].map(w=>({wch:w}));
+  applyHdrStyle(ws, hdrs.length, 0);
+  rows.forEach((_, i) => applyRowStyle(ws, i+1, hdrs.length, i%2===1));
+  XLSX.utils.book_append_sheet(wb, ws, 'Payroll Preview');
+  dlXlsx(wb, 'HCM_Payroll_Preview_Feb2026.xlsx');
+  showToast('✅ Payroll preview exported');
+}
+
+function exportPayrollResult() {
+  const wb = XLSX.utils.book_new();
+  // Sheet 1: Summary
+  const summRows = [
+    ['HCM PRO KSA — PAYROLL SESSION', ''],
+    ['Period', 'February 2026'],
+    ['Session ID', 'PAY-2026-02-001'],
+    ['Generated By', 'HR Admin'],
+    ['Generated On', '23 Feb 2026'],
+    ['', ''],
+    ['SUMMARY', ''],
+    ['Total Employees', 247],
+    ['Gross Payroll (SAR)', 2100000],
+    ['Total Deductions (SAR)', 189000],
+    ['Net Payable (SAR)', 1911000],
+    ['GOSI Saudi Contribution (SAR)', 111150],
+    ['GOSI Expat Contribution (SAR)', 24700],
+    ['Employer GOSI (SAR)', 148200],
+    ['', ''],
+    ['WPS STATUS', ''],
+    ['Al Rajhi Bank', 124],
+    ['SNB', 67],
+    ['Riyad Bank', 38],
+    ['Alinma Bank', 10],
+    ['Pending IBAN', 8],
+  ];
+  const wsSumm = XLSX.utils.aoa_to_sheet(summRows);
+  wsSumm['!cols'] = [{wch:30},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, wsSumm, 'Summary');
+
+  // Sheet 2: Detail
+  const hdrs = ['Emp ID','Employee','Department','Basic SAR','Housing','Transport','Other Allow.','Gross SAR','GOSI Ded.','Net Pay SAR','WPS Status'];
+  const rows = payrollData.map(e => {
+    const gross = e.basic + e.housing + e.transport + e.other;
+    const gosi = Math.round(e.basic * e.gosiPct);
+    return [e.id, e.name, e.dept, e.basic, e.housing, e.transport, e.other, gross, gosi, gross-gosi, e.wps?'Ready':'Pending'];
+  });
+  const ws2 = XLSX.utils.aoa_to_sheet([hdrs,...rows]);
+  ws2['!cols'] = [10,24,16,12,12,12,14,14,12,14,12].map(w=>({wch:w}));
+  applyHdrStyle(ws2, hdrs.length, 0);
+  rows.forEach((_,i) => applyRowStyle(ws2, i+1, hdrs.length, i%2===1));
+  XLSX.utils.book_append_sheet(wb, ws2, 'Payroll Detail');
+
+  dlXlsx(wb, 'HCM_Payroll_Feb2026_FINAL.xlsx');
+  showToast('✅ Payroll report exported — 2 sheets');
+}
+
+
+/* ══ EXCEL EXPORT ══ */
+let currentView='home';
+function applyHdrStyle(ws,cols,row){for(let c=0;c<cols;c++){const ref=XLSX.utils.encode_cell({r:row,c});if(!ws[ref])return;ws[ref].s={font:{bold:true,color:{rgb:'FFFFFF'},name:'Arial',sz:10},fill:{fgColor:{rgb:'162054'},patternType:'solid'},alignment:{horizontal:'center',vertical:'center'},border:{top:{style:'thin',color:{rgb:'E2E8F8'}},bottom:{style:'thin',color:{rgb:'E2E8F8'}},left:{style:'thin',color:{rgb:'E2E8F8'}},right:{style:'thin',color:{rgb:'E2E8F8'}}}};}}
+function applyRowStyle(ws,row,cols,alt){for(let c=0;c<cols;c++){const ref=XLSX.utils.encode_cell({r:row,c});if(!ws[ref])ws[ref]={v:'',t:'s'};ws[ref].s={font:{name:'Arial',sz:10},fill:{fgColor:{rgb:alt?'EEF2FF':'FFFFFF'},patternType:'solid'},alignment:{vertical:'center'},border:{top:{style:'thin',color:{rgb:'E2E8F8'}},bottom:{style:'thin',color:{rgb:'E2E8F8'}},left:{style:'thin',color:{rgb:'E2E8F8'}},right:{style:'thin',color:{rgb:'E2E8F8'}}}};}}
+function dlXlsx(wb,name){const out=XLSX.write(wb,{bookType:'xlsx',type:'array',cellStyles:true});const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download=name;a.click();}
+function makeSheet(headers,rows,colWidths){const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);ws['!cols']=colWidths.map(w=>({wch:w}));ws['!rows']=[{hpt:28},...rows.map(()=>({hpt:20}))];applyHdrStyle(ws,headers.length,0);rows.forEach((_,i)=>applyRowStyle(ws,i+1,headers.length,i%2===1));return ws;}
+
+function exportEmployees(){
+  const wb=XLSX.utils.book_new();
+  const hdrs=['Emp ID','Full Name','Position','Department','Nationality','NID / Iqama No.','Iqama Expiry','GOSI Enrolled','Status'];
+  const rows=employees.map(e=>[e.id,e.first+' '+e.last,e.pos,e.dept,e.nat,e.nat==='Saudi'?(e.natid||'—'):(e.iqama||'—'),e.iqamaExp||'N/A',e.gosi?'Yes':'No',e.status.charAt(0).toUpperCase()+e.status.slice(1)]);
+  XLSX.utils.book_append_sheet(wb,makeSheet(hdrs,rows,[10,24,22,16,14,20,14,12,12]),'Employees');
+  const tot=employees.length,saudi=employees.filter(e=>e.nat==='Saudi').length,gosiOk=employees.filter(e=>e.gosi).length;
+  const expiring=employees.filter(e=>{if(e.nat==='Saudi'||!e.iqamaExp)return false;const d=Math.ceil((new Date(e.iqamaExp)-new Date())/86400000);return d>=0&&d<30;}).length;
+  const expired=employees.filter(e=>{if(e.nat==='Saudi'||!e.iqamaExp)return false;return new Date(e.iqamaExp)<new Date();}).length;
+  const sHdrs=['Metric','Value','Pct'];
+  const sRows=[['WORKFORCE','',''],['Total Employees',tot,''],['Saudi Nationals',saudi,(saudi/tot*100).toFixed(1)+'%'],['Expatriates',tot-saudi,((tot-saudi)/tot*100).toFixed(1)+'%'],['','',''],['STATUS','',''],['Active',employees.filter(e=>e.status==='active').length,''],['On Probation',employees.filter(e=>e.status==='probation').length,''],['Inactive',employees.filter(e=>e.status==='inactive').length,''],['','',''],['COMPLIANCE','',''],['GOSI Enrolled',gosiOk,''],['GOSI Pending',tot-gosiOk,''],['Iqama Expiring <30d',expiring,''],['Iqama Expired',expired,'']];
+  const ws2=XLSX.utils.aoa_to_sheet([sHdrs,...sRows]);ws2['!cols']=[{wch:28},{wch:14},{wch:10}];applyHdrStyle(ws2,3,0);sRows.forEach((_,i)=>applyRowStyle(ws2,i+1,3,i%2===1));
+  XLSX.utils.book_append_sheet(wb,ws2,'Summary');
+  dlXlsx(wb,'HCM_Employees_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  showToast('✅ Employees exported — 2 sheets');
+}
+
+function exportDepartments(){
+  const wb=XLSX.utils.book_new();
+  const dHdrs=['Dept ID','Department Name','Arabic Name','Department Head','Headcount','Sub-Teams','Fill Rate %','Budget HC'];
+  const dRows=departments.map(d=>[d.id,d.name,d.ar,d.head,d.count,d.subs.length,Math.round(d.count/d.budget*100)+'%',d.budget]);
+  XLSX.utils.book_append_sheet(wb,makeSheet(dHdrs,dRows,[10,18,22,24,12,12,12,12]),'Departments');
+  const sdHdrs=['Code','Team Name','Parent Department','Team Lead','Headcount','Cost Center'];
+  const sdRows=subDepts.map(sd=>[sd.code,sd.name,sd.parent,sd.lead,sd.count,sd.cc]);
+  XLSX.utils.book_append_sheet(wb,makeSheet(sdHdrs,sdRows,[12,24,18,26,12,14]),'Sub-Departments');
+  dlXlsx(wb,'HCM_Departments_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  showToast('✅ Departments exported — 2 sheets');
+}
+
+function exportFullReport(){
+  const wb=XLSX.utils.book_new();
+  const tot=employees.length,saudi=employees.filter(e=>e.nat==='Saudi').length;
+  const dashRows=[['HCM PRO KSA — FULL DATA EXPORT',''],['Generated',new Date().toLocaleDateString('en-GB')],['',''],['WORKFORCE SUMMARY',''],['Total Employees',tot],['Saudi Nationals',saudi],['Expatriates',tot-saudi],['Active Employees',employees.filter(e=>e.status==='active').length],['On Probation',employees.filter(e=>e.status==='probation').length],['Inactive',employees.filter(e=>e.status==='inactive').length],['',''],['COMPLIANCE',''],['GOSI Enrolled',employees.filter(e=>e.gosi).length],['GOSI Pending',tot-employees.filter(e=>e.gosi).length],['',''],['ORGANISATION',''],['Departments',departments.length],['Sub-Departments',subDepts.length],['',''],['PAYROLL (Feb 2026)',''],['Monthly Payroll (SAR)','2,100,000'],['Processed Staff',239],['WPS Registered',231]];
+  const wsDash=XLSX.utils.aoa_to_sheet(dashRows);wsDash['!cols']=[{wch:30},{wch:20}];
+  if(wsDash['A1'])wsDash['A1'].s={font:{bold:true,sz:13,name:'Arial',color:{rgb:'162054'}},fill:{fgColor:{rgb:'EEF2FF'},patternType:'solid'}};
+  XLSX.utils.book_append_sheet(wb,wsDash,'Dashboard');
+  const eHdrs=['Emp ID','Full Name','Position','Department','Nationality','NID / Iqama','Iqama Expiry','GOSI','Status'];
+  const eRows=employees.map(e=>[e.id,e.first+' '+e.last,e.pos,e.dept,e.nat,e.nat==='Saudi'?e.natid:e.iqama,e.iqamaExp||'N/A',e.gosi?'Yes':'No',e.status]);
+  XLSX.utils.book_append_sheet(wb,makeSheet(eHdrs,eRows,[10,24,22,16,14,20,14,10,12]),'Employees');
+  const dHdrs=['Dept ID','Department','Arabic','Head','Staff','Teams','Fill%'];
+  const dRows=departments.map(d=>[d.id,d.name,d.ar,d.head,d.count,d.subs.length,Math.round(d.count/d.budget*100)+'%']);
+  XLSX.utils.book_append_sheet(wb,makeSheet(dHdrs,dRows,[10,18,22,24,10,10,10]),'Departments');
+  const sdHdrs=['Code','Team','Parent Dept','Lead','HC','Cost Center'];
+  const sdRows=subDepts.map(sd=>[sd.code,sd.name,sd.parent,sd.lead,sd.count,sd.cc]);
+  XLSX.utils.book_append_sheet(wb,makeSheet(sdHdrs,sdRows,[12,24,16,26,10,14]),'Sub-Departments');
+  dlXlsx(wb,'HCM_Full_Report_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  showToast('✅ Full report exported — 4 sheets');
+}
+
+function handleExport(){
+  const map={employees:exportEmployees,departments:exportDepartments,subdepartments:exportDepartments};
+  (map[currentView]||exportFullReport)();
+}
+
+renderEmp();renderDepts();renderSubDepts();handleNat();nav('home');
+</script>
+</body>
+</html>

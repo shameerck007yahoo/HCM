@@ -40,72 +40,77 @@ html{font-size:14px;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;}
 
 /* ══ LOGIN PAGE ══ */
-#loginPage{display:flex;min-height:100vh;}
+#loginPage{
+  display:flex;min-height:100vh;
+  align-items:center;justify-content:center;
+  background:var(--navy);
+  position:relative;overflow:hidden;
+}
 #loginPage.hidden{display:none;}
-.login-left{
-  width:480px;flex-shrink:0;background:var(--navy);
-  display:flex;flex-direction:column;justify-content:center;
-  padding:56px 52px;position:relative;overflow:hidden;
-}
-.login-left::before{content:'';position:absolute;top:-80px;right:-80px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(61,90,241,0.22) 0%,transparent 70%);pointer-events:none;}
-.login-left::after{content:'';position:absolute;bottom:-60px;left:-40px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,0.15) 0%,transparent 70%);pointer-events:none;}
-.ll-logo{display:flex;align-items:center;gap:12px;margin-bottom:44px;position:relative;z-index:1;}
-.ll-logo-mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--ind),#6C63FF);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(61,90,241,0.45);flex-shrink:0;}
-.ll-logo-text{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.1;}
-.ll-logo-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,0.28);letter-spacing:0.13em;text-transform:uppercase;margin-top:2px;}
-.ll-headline{font-family:'Bricolage Grotesque',sans-serif;font-size:30px;font-weight:800;color:#fff;letter-spacing:-0.04em;line-height:1.18;margin-bottom:12px;position:relative;z-index:1;}
-.ll-headline span{color:#7C9EFF;}
-.ll-sub{font-size:13px;color:rgba(255,255,255,0.42);line-height:1.65;max-width:320px;position:relative;z-index:1;}
-.ll-kpis{margin-top:40px;display:flex;flex-direction:column;gap:9px;position:relative;z-index:1;}
-.ll-kpi{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);}
-.ll-kpi-ico{font-size:15px;width:28px;text-align:center;flex-shrink:0;}
-.ll-kpi-val{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:800;color:#fff;line-height:1;}
-.ll-kpi-lbl{font-size:10px;color:rgba(255,255,255,0.32);margin-top:1px;}
 
-.login-right{
-  flex:1;background:var(--surface);
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  padding:48px 40px;position:relative;
+/* subtle background mesh */
+#loginPage::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%, rgba(61,90,241,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 80%, rgba(124,58,237,0.13) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 60% 10%, rgba(8,145,178,0.08) 0%, transparent 50%);
+  pointer-events:none;
 }
-.login-right::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ind),#6C63FF,var(--teal));}
+/* fine dot grid */
+#loginPage::after{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,0.04) 1px,transparent 1px);
+  background-size:28px 28px;
+  pointer-events:none;
+}
 
-/* ── Google Sign-In Card ── */
-.login-box{width:100%;max-width:400px;}
+/* card */
 .login-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:20px;padding:40px 36px;
-  box-shadow:var(--sh-lg);
+  position:relative;z-index:1;
+  width:380px;
+  background:rgba(255,255,255,0.035);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:24px;
+  padding:48px 44px 40px;
+  backdrop-filter:blur(24px);
+  box-shadow:0 32px 80px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.08);
   display:flex;flex-direction:column;align-items:center;text-align:center;
+  animation:cardIn .5s cubic-bezier(0.34,1.2,0.64,1);
 }
-.lc-logo{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--ind),#6C63FF);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 6px 20px rgba(61,90,241,0.35);margin-bottom:20px;}
-.lc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-0.03em;margin-bottom:6px;}
-.lc-sub{font-size:13px;color:var(--t3);margin-bottom:32px;line-height:1.6;max-width:280px;}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-/* Google button custom wrapper */
+.lc-mark{
+  width:64px;height:64px;border-radius:18px;
+  background:linear-gradient(145deg,#4F6EF7,#6C63FF);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 28px rgba(61,90,241,0.55),inset 0 1px 0 rgba(255,255,255,0.2);
+  margin-bottom:24px;flex-shrink:0;
+}
+.lc-mark svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+
+.lc-title{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-size:22px;font-weight:800;
+  color:#fff;letter-spacing:-0.03em;
+  line-height:1.2;margin-bottom:6px;
+}
+.lc-sub{
+  font-size:12.5px;color:rgba(255,255,255,0.38);
+  margin-bottom:36px;line-height:1.55;
+  letter-spacing:0.01em;
+}
+
+/* Google button wrapper — centres the iframe Google renders */
 .google-btn-wrap{
-  width:100%;display:flex;justify-content:center;margin-bottom:24px;
+  width:100%;display:flex;justify-content:center;
+  margin-bottom:20px;
 }
-.google-signin-custom{
-  display:flex;align-items:center;justify-content:center;gap:12px;
-  width:100%;padding:13px 20px;
-  border:1.5px solid var(--border);border-radius:12px;
-  background:var(--surface);cursor:pointer;
-  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--t1);
-  transition:all 0.18s;box-shadow:var(--sh-sm);
+
+.lc-footer{
+  font-size:10.5px;color:rgba(255,255,255,0.2);
+  margin-top:8px;letter-spacing:0.02em;
 }
-.google-signin-custom:hover{border-color:var(--ind);box-shadow:0 4px 20px var(--ind-glow);transform:translateY(-1px);}
-.google-signin-custom:active{transform:translateY(0);}
-.google-logo{width:20px;height:20px;flex-shrink:0;}
-
-.lc-divider{display:flex;align-items:center;gap:10px;width:100%;margin-bottom:20px;}
-.lc-divider::before,.lc-divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.lc-divider span{font-size:11px;color:var(--t4);white-space:nowrap;}
-
-.lc-features{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
-.lc-feat{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;background:var(--bg);border:1px solid var(--border2);font-size:12px;color:var(--t3);text-align:left;}
-.lc-feat-ico{font-size:14px;flex-shrink:0;}
-
-.lc-notice{font-size:11px;color:var(--t4);line-height:1.6;padding:10px 14px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);width:100%;}
 
 /* Loading overlay */
 .login-loading{
@@ -438,53 +443,23 @@ tbody tr:hover .ra{opacity:1;}
 <body>
 
 <!-- ═══════════════════════════════════════
-     LOGIN PAGE — Google OAuth Only
+     LOGIN PAGE
 ═══════════════════════════════════════ -->
 <div id="loginPage">
-  <!-- Left brand panel -->
-  <div class="login-left">
-    <div class="ll-logo">
-      <div class="ll-logo-mark">🏢</div>
-      <div>
-        <div class="ll-logo-text">HCM Pro</div>
-        <div class="ll-logo-sub">KSA · Payroll Suite</div>
-      </div>
+  <div class="login-card">
+
+    <!-- Logo mark -->
+    <div class="lc-mark">
+      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h10M7 12h6" stroke-opacity=".7"/></svg>
     </div>
-    <div class="ll-headline">Smart HR for<br><span>Saudi Arabia</span></div>
-    <div class="ll-sub">WPS-compliant payroll, GOSI management, Iqama tracking and full workforce analytics — all secured in one platform.</div>
-    <div class="ll-kpis">
-      <div class="ll-kpi"><div class="ll-kpi-ico">👥</div><div><div class="ll-kpi-val">247</div><div class="ll-kpi-lbl">Active Employees</div></div></div>
-      <div class="ll-kpi"><div class="ll-kpi-ico">💰</div><div><div class="ll-kpi-val">SAR 2.1M</div><div class="ll-kpi-lbl">Monthly Payroll</div></div></div>
-      <div class="ll-kpi"><div class="ll-kpi-ico">🇸🇦</div><div><div class="ll-kpi-val">73%</div><div class="ll-kpi-lbl">Saudization Rate</div></div></div>
-    </div>
-  </div>
 
-  <!-- Right — Google Sign-In only -->
-  <div class="login-right">
-    <div class="login-box">
-      <div class="login-card">
-        <div class="lc-logo">🏢</div>
-        <div class="lc-title">Welcome to HCM Pro</div>
-        <div class="lc-sub">Sign in with your Google account to access the platform. Your data syncs automatically to Google Drive.</div>
+    <div class="lc-title">HCM Professional</div>
+    <div class="lc-sub">Human Capital Management · KSA</div>
 
-        <!-- Google renders its own button here via GSI -->
-        <div class="google-btn-wrap" id="googleBtnContainer"></div>
+    <!-- Google renders its button here -->
+    <div class="google-btn-wrap" id="googleBtnContainer"></div>
 
-        <div class="lc-divider"><span>What you get</span></div>
-
-        <div class="lc-features">
-          <div class="lc-feat"><span class="lc-feat-ico">🔐</span><span>Data encrypted with AES-256 — only you can read it</span></div>
-          <div class="lc-feat"><span class="lc-feat-ico">☁️</span><span>All changes auto-saved as JSON to your Google Drive</span></div>
-          <div class="lc-feat"><span class="lc-feat-ico">📱</span><span>Access from any device after signing in</span></div>
-          <div class="lc-feat"><span class="lc-feat-ico">🔄</span><span>Real-time sync — employees, departments, payroll</span></div>
-        </div>
-
-        <div class="lc-notice">
-          🔒 This app uses Google OAuth 2.0 and requests access only to its own private app folder in your Drive. No other Drive files are accessed.
-        </div>
-      </div>
-      <div style="text-align:center;margin-top:16px;font-size:11px;color:var(--t4)">© 2026 HCM Pro KSA &nbsp;·&nbsp; <a href="#" style="color:var(--ind);text-decoration:none">Privacy</a></div>
-    </div>
+    <div class="lc-footer">Secured with Google OAuth 2.0</div>
   </div>
 </div>
 
@@ -941,8 +916,8 @@ tbody tr:hover .ra{opacity:1;}
           <div style="font-size:9.5px;color:var(--t3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Employees</div>
         </div>
       </div>
-      <div class="drive-info-row"><div class="drive-info-ico">📁</div><div class="drive-info-text"><strong>hcm_data.json</strong><span>Employees, departments, sub-departments — single encrypted file</span></div></div>
-      <div class="drive-info-row" style="margin-bottom:0"><div class="drive-info-ico">🔐</div><div class="drive-info-text"><strong>AES-256 Encrypted</strong><span>Your data is unreadable without the app key. Google cannot access it.</span></div></div>
+      <div class="drive-info-row"><div class="drive-info-ico">📁</div><div class="drive-info-text"><strong>My Drive → HCM Pro KSA → hcm_data.json</strong><span>Visible in your Google Drive — open and view any time</span></div></div>
+      <div class="drive-info-row" style="margin-bottom:0"><div class="drive-info-ico">🔄</div><div class="drive-info-text"><strong>Auto-synced on every change</strong><span>Add/edit/delete employees updates the file instantly. Any browser, any device.</span></div></div>
     </div>
     <div class="m-ft">
       <button class="btn btn-secondary btn-sm" onclick="doLogout()">⏻ Sign Out</button>
@@ -963,10 +938,13 @@ tbody tr:hover .ra{opacity:1;}
 // ══════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════
-const GOOGLE_CLIENT_ID = '141075172405-6kt37p0jv3atb5sfp5lmv8a38i494nq8.apps.googleusercontent.com';
-const DRIVE_SCOPE      = 'https://www.googleapis.com/auth/drive.appdata';
-const DRIVE_FILE_NAME  = 'hcm_data.json';
-const ENC_KEY          = 'HCMPro$KSA#2026!AES256_DriveSync_v2';
+const GOOGLE_CLIENT_ID  = '141075172405-6kt37p0jv3atb5sfp5lmv8a38i494nq8.apps.googleusercontent.com';
+// drive.file = user can SEE the file in their Google Drive
+const DRIVE_SCOPE       = 'https://www.googleapis.com/auth/drive.file';
+const DRIVE_FOLDER_NAME = 'HCM Pro KSA';       // visible folder in My Drive
+const DRIVE_FILE_NAME   = 'hcm_data.json';     // plain JSON — no encryption so it's readable
+// We no longer encrypt so the file is transparent and readable in Drive
+// (encryption was causing cross-browser key issues and hiding the file)
 
 // ══════════════════════════════════════════════
 // STATE
@@ -975,7 +953,8 @@ let accessToken   = null;
 let tokenClient   = null;
 let currentUser   = null;   // { name, email, picture }
 let syncCount     = 0;
-let driveFileId   = null;   // cached Drive file ID
+let driveFileId   = null;   // cached file ID (session only)
+let driveFolderId = null;   // cached folder ID (session only)
 let lastSyncTime  = null;
 
 // DATA (loaded from Drive or seeded with defaults)
@@ -1016,18 +995,11 @@ const DEFAULT_SUBDEPTS = [
 ];
 
 // ══════════════════════════════════════════════
-// ENCRYPTION
+// JSON helpers — plain JSON, readable in Drive
 // ══════════════════════════════════════════════
-function encryptData(data) {
-  return CryptoJS.AES.encrypt(JSON.stringify(data), ENC_KEY).toString();
-}
-function decryptData(cipher) {
-  try {
-    const b = CryptoJS.AES.decrypt(cipher, ENC_KEY);
-    return JSON.parse(b.toString(CryptoJS.enc.Utf8));
-  } catch(e) {
-    return null;
-  }
+function serializeData(data)  { return JSON.stringify(data, null, 2); }
+function deserializeData(text) {
+  try { return JSON.parse(text); } catch(e) { return null; }
 }
 
 // ══════════════════════════════════════════════
@@ -1039,7 +1011,7 @@ function initGoogleTokenClient() {
       clearInterval(t);
       tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: GOOGLE_CLIENT_ID,
-        scope: DRIVE_SCOPE,
+        scope: DRIVE_SCOPE,   // drive.file — creates visible files in My Drive
         callback: async (resp) => {
           if (resp.error) {
             showLoading(false);
@@ -1112,57 +1084,98 @@ function onGoogleIdToken(credentialResponse) {
 }
 
 // ══════════════════════════════════════════════
-// DRIVE OPERATIONS
+// DRIVE OPERATIONS — visible folder in My Drive
 // ══════════════════════════════════════════════
 async function driveRequest(url, options = {}) {
-  const resp = await fetch(url, {
+  // If token expired, re-request silently then retry once
+  const doFetch = (tok) => fetch(url, {
     ...options,
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      ...options.headers,
-    },
+    headers: { 'Authorization': `Bearer ${tok}`, ...options.headers },
   });
+  let resp = await doFetch(accessToken);
+  if (resp.status === 401) {
+    // Token expired — get a new one silently (no consent prompt)
+    await new Promise((resolve, reject) => {
+      tokenClient.callback = async (r) => {
+        if (r.error) { reject(r.error); return; }
+        accessToken = r.access_token;
+        resolve();
+      };
+      tokenClient.requestAccessToken({ prompt: '' });
+    });
+    resp = await doFetch(accessToken);
+  }
   return resp;
 }
 
+// Find or create "HCM Pro KSA" folder in My Drive
+async function getOrCreateFolder() {
+  if (driveFolderId) return driveFolderId;
+
+  // Search for existing folder
+  const q = encodeURIComponent(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  const r = await driveRequest(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
+  const d = await r.json();
+
+  if (d.files && d.files.length > 0) {
+    driveFolderId = d.files[0].id;
+    return driveFolderId;
+  }
+
+  // Create new folder
+  const cr = await driveRequest('https://www.googleapis.com/drive/v3/files?fields=id', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: DRIVE_FOLDER_NAME, mimeType: 'application/vnd.google-apps.folder' }),
+  });
+  const cd = await cr.json();
+  driveFolderId = cd.id;
+  return driveFolderId;
+}
+
+// Find hcm_data.json inside the HCM folder (always fresh search — works cross-browser)
 async function findDriveFile() {
-  const resp = await driveRequest(
-    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='${DRIVE_FILE_NAME}'&fields=files(id,modifiedTime,size)`
-  );
-  const data = await resp.json();
-  return data.files?.[0] || null;
+  const folderId = await getOrCreateFolder();
+  const q = encodeURIComponent(`name='${DRIVE_FILE_NAME}' and '${folderId}' in parents and trashed=false`);
+  const r = await driveRequest(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)&orderBy=modifiedTime+desc`);
+  const d = await r.json();
+  return d.files?.[0] || null;
 }
 
+// Read file content
 async function readDriveFile(fileId) {
-  const resp = await driveRequest(
-    `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`
-  );
-  return await resp.text();
+  const r = await driveRequest(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
+  return await r.text();
 }
 
+// Write (create or update) — always look up file ID fresh to avoid stale state
 async function writeDriveFile(jsonPayload) {
-  const encText = encryptData(jsonPayload);
-  const blob    = new Blob([encText], { type: 'text/plain' });
+  const folderId = await getOrCreateFolder();
+  const content  = serializeData(jsonPayload);
+  const blob     = new Blob([content], { type: 'application/json' });
 
-  if (driveFileId) {
-    // Update existing
-    const form = new FormData();
+  // Always search fresh — this is what makes cross-browser work
+  const existing = await findDriveFile();
+
+  const form = new FormData();
+  if (existing) {
+    // Update existing file (no parent needed on update)
     form.append('metadata', new Blob([JSON.stringify({ name: DRIVE_FILE_NAME })], { type: 'application/json' }));
     form.append('file', blob);
     await driveRequest(
-      `https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=multipart`,
+      `https://www.googleapis.com/upload/drive/v3/files/${existing.id}?uploadType=multipart`,
       { method: 'PATCH', body: form }
     );
+    driveFileId = existing.id;
   } else {
-    // Create new in appDataFolder
-    const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify({ name: DRIVE_FILE_NAME, parents: ['appDataFolder'] })], { type: 'application/json' }));
+    // Create new file in HCM folder
+    form.append('metadata', new Blob([JSON.stringify({ name: DRIVE_FILE_NAME, parents: [folderId] })], { type: 'application/json' }));
     form.append('file', blob);
-    const resp = await driveRequest(
+    const r = await driveRequest(
       `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id`,
       { method: 'POST', body: form }
     );
-    const result = await resp.json();
+    const result = await r.json();
     driveFileId = result.id;
   }
 
@@ -1171,46 +1184,47 @@ async function writeDriveFile(jsonPayload) {
   updateSyncUI();
 }
 
-// ── Load existing data from Drive, or seed defaults and save ──
+// ── Load from Drive on login — ALWAYS fetch fresh, never use local cache ──
 async function loadOrInitDrive() {
   try {
-    showLoading(true, 'Checking Drive for your data…', 'This only takes a moment');
+    showLoading(true, 'Looking for your data in Google Drive…', 'Searching "HCM Pro KSA" folder');
+
+    // Always do a live search — this is the key fix for cross-browser
     const file = await findDriveFile();
 
     if (file) {
       driveFileId = file.id;
-      showLoading(true, 'Loading your HCM data…', 'Decrypting…');
-      const cipherText = await readDriveFile(file.id);
-      const data = decryptData(cipherText);
+      showLoading(true, 'Loading your HCM data…', `Last saved: ${new Date(file.modifiedTime).toLocaleString()}`);
+      const text = await readDriveFile(file.id);
+      const data = deserializeData(text);
 
-      if (data && data.employees) {
-        employees    = data.employees    || [];
-        departments  = data.departments  || DEFAULT_DEPARTMENTS;
-        subDepts     = data.subDepts     || DEFAULT_SUBDEPTS;
-        showToast('✅ Data loaded from Google Drive');
+      if (data && (data.employees || data.departments)) {
+        employees   = Array.isArray(data.employees)   ? data.employees   : [...DEFAULT_EMPLOYEES];
+        departments = Array.isArray(data.departments) ? data.departments : [...DEFAULT_DEPARTMENTS];
+        subDepts    = Array.isArray(data.subDepts)    ? data.subDepts    : [...DEFAULT_SUBDEPTS];
+        showToast(`✅ Loaded ${employees.length} employees from Google Drive`);
       } else {
-        // File exists but unreadable (wrong key?) — use defaults
+        // File exists but empty/corrupt — overwrite with defaults
         employees   = [...DEFAULT_EMPLOYEES];
         departments = [...DEFAULT_DEPARTMENTS];
         subDepts    = [...DEFAULT_SUBDEPTS];
-        await writeDriveFile({ employees, departments, subDepts });
+        await writeDriveFile({ employees, departments, subDepts, _meta: { savedAt: new Date().toISOString(), version: '2.0' } });
       }
     } else {
-      // First time — seed with defaults and save
-      showLoading(true, 'First launch — setting up your workspace…', 'Saving default data to Drive');
+      // First time user — seed defaults
+      showLoading(true, 'First launch — creating your workspace…', 'Saving to Google Drive');
       employees   = [...DEFAULT_EMPLOYEES];
       departments = [...DEFAULT_DEPARTMENTS];
       subDepts    = [...DEFAULT_SUBDEPTS];
-      await writeDriveFile({ employees, departments, subDepts });
-      showToast('✅ Workspace created in Google Drive');
+      await writeDriveFile({ employees, departments, subDepts, _meta: { savedAt: new Date().toISOString(), version: '2.0' } });
+      showToast('✅ Workspace created in "HCM Pro KSA" folder in your Drive');
     }
   } catch(e) {
-    console.error('Drive error:', e);
-    // Fallback to defaults offline
+    console.error('Drive load error:', e);
     employees   = [...DEFAULT_EMPLOYEES];
     departments = [...DEFAULT_DEPARTMENTS];
     subDepts    = [...DEFAULT_SUBDEPTS];
-    showToast('⚠ Drive error — using local data', 'warn');
+    showToast('⚠ Could not reach Drive — working offline', 'warn');
   }
 }
 
@@ -1219,11 +1233,21 @@ async function saveAllToDrive(showMsg = false) {
   if (!accessToken) return;
   setSyncSpinner(true);
   try {
-    await writeDriveFile({ employees, departments, subDepts });
-    if (showMsg) showToast('☁️ Synced to Google Drive');
+    await writeDriveFile({
+      employees,
+      departments,
+      subDepts,
+      _meta: {
+        savedAt:   new Date().toISOString(),
+        savedBy:   currentUser?.email || 'unknown',
+        empCount:  employees.length,
+        version:   '2.0',
+      }
+    });
+    if (showMsg) showToast('☁️ Saved to Google Drive · "HCM Pro KSA" folder');
     updateDriveModal();
   } catch(e) {
-    showToast('Drive save failed', 'err');
+    showToast('Drive save failed: ' + e.message, 'err');
     console.error(e);
   }
   setSyncSpinner(false);
@@ -1281,12 +1305,15 @@ function doLogout() {
     google.accounts.oauth2.revoke(accessToken, () => {});
     google.accounts.id.disableAutoSelect();
   }
-  accessToken = null;
-  currentUser = null;
-  driveFileId = null;
-  employees = [];
-  departments = [];
-  subDepts = [];
+  accessToken   = null;
+  currentUser   = null;
+  driveFileId   = null;
+  driveFolderId = null;
+  syncCount     = 0;
+  lastSyncTime  = null;
+  employees     = [];
+  departments   = [];
+  subDepts      = [];
   document.getElementById('appWrapper').classList.remove('visible');
   document.getElementById('loginPage').classList.remove('hidden');
 }
